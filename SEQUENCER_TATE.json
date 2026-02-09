@@ -1,1087 +1,1072 @@
 {
-    "name":  "SEQUENCER_TATE",
-    "nodes":  [
-                  {
-                      "parameters":  {
-
-                                     },
-                      "type":  "n8n-nodes-base.manualTrigger",
-                      "typeVersion":  1,
-                      "position":  [
-                                       -1184,
-                                       -80
-                                   ],
-                      "id":  "2d452900-b854-4277-8896-e89561e5b3b6",
-                      "name":  "When clicking ???Execute workflow???"
-                  },
-                  {
-                      "parameters":  {
-                                         "url":  "=https://api.shotstack.io/v1/render/{{ $json.response?.id || $json.id }}",
-                                         "authentication":  "genericCredentialType",
-                                         "genericAuthType":  "httpHeaderAuth",
-                                         "sendHeaders":  true,
-                                         "specifyHeaders":  "json",
-                                         "jsonHeaders":  "{\n  \"Content-Type\": \"application/json\"\n}",
-                                         "options":  {
-
-                                                     }
-                                     },
-                      "id":  "6024a843-03d3-478e-a1b5-7d2c66699664",
-                      "name":  "Check Render Status1",
-                      "type":  "n8n-nodes-base.httpRequest",
-                      "typeVersion":  4,
-                      "position":  [
-                                       2208,
-                                       592
-                                   ],
-                      "credentials":  {
-                                          "httpHeaderAuth":  {
-                                                                 "id":  "ZUNUpkqvoCummIyt",
-                                                                 "name":  "Shotstack API _Tate"
-                                                             }
-                                      },
-                      "disabled":  true
-                  },
-                  {
-                      "parameters":  {
-                                         "amount":  60,
-                                         "unit":  "seconds"
-                                     },
-                      "id":  "bb0a266b-af24-4301-b207-7b1623237b80",
-                      "name":  "Wait 60s1",
-                      "type":  "n8n-nodes-base.wait",
-                      "typeVersion":  1,
-                      "position":  [
-                                       1984,
-                                       592
-                                   ],
-                      "webhookId":  "263f130d-ee69-41f7-990e-729f6adf9e4d",
-                      "disabled":  true
-                  },
-                  {
-                      "parameters":  {
-                                         "conditions":  {
-                                                            "options":  {
-                                                                            "version":  2,
-                                                                            "leftValue":  "",
-                                                                            "caseSensitive":  true,
-                                                                            "typeValidation":  "strict"
-                                                                        },
-                                                            "conditions":  [
-                                                                               {
-                                                                                   "id":  "299a7c34-dcff-4991-a73f-5b1a84f188ea",
-                                                                                   "operator":  {
-                                                                                                    "name":  "filter.operator.equals",
-                                                                                                    "type":  "string",
-                                                                                                    "operation":  "equals"
-                                                                                                },
-                                                                                   "leftValue":  "={{$json.response?.status}}",
-                                                                                   "rightValue":  "done"
-                                                                               },
-                                                                               {
-                                                                                   "id":  "127d0429-7cc2-48f6-8ef9-7336037dba1b",
-                                                                                   "leftValue":  "={{$json.response?.status}}",
-                                                                                   "rightValue":  "failed",
-                                                                                   "operator":  {
-                                                                                                    "type":  "string",
-                                                                                                    "operation":  "equals",
-                                                                                                    "name":  "filter.operator.equals"
-                                                                                                }
-                                                                               }
-                                                                           ],
-                                                            "combinator":  "or"
-                                                        },
-                                         "options":  {
-
-                                                     }
-                                     },
-                      "id":  "f89f348e-058d-45da-b5b6-65e64f80a0f3",
-                      "name":  "Completed?",
-                      "type":  "n8n-nodes-base.if",
-                      "position":  [
-                                       2432,
-                                       592
-                                   ],
-                      "typeVersion":  2.2,
-                      "disabled":  true
-                  },
-                  {
-                      "parameters":  {
-                                         "mode":  "raw",
-                                         "jsonOutput":  "={{$json.response?.url || $json.url || $json.data?.url || $json.assets?.[0]?.url}}",
-                                         "options":  {
-
-                                                     }
-                                     },
-                      "type":  "n8n-nodes-base.set",
-                      "typeVersion":  3.4,
-                      "position":  [
-                                       2656,
-                                       576
-                                   ],
-                      "id":  "efa060ae-742d-4d3f-8e67-92e94ed2bce1",
-                      "name":  "Edit Fields",
-                      "disabled":  true
-                  },
-                  {
-                      "parameters":  {
-                                         "url":  "={{$json.assetUrl}}",
-                                         "options":  {
-                                                         "response":  {
-                                                                          "response":  {
-                                                                                           "responseFormat":  "file"
-                                                                                       }
-                                                                      }
-                                                     }
-                                     },
-                      "type":  "n8n-nodes-base.httpRequest",
-                      "typeVersion":  4.2,
-                      "position":  [
-                                       2880,
-                                       576
-                                   ],
-                      "id":  "d9fdb868-b089-4299-b7cf-2d644d73b759",
-                      "name":  "Download the file1",
-                      "disabled":  true
-                  },
-                  {
-                      "parameters":  {
-                                         "inputDataFieldName":  "datadata",
-                                         "name":  "={{$json.fileName || `shotstack_render_${$now}.mp4`}}",
-                                         "driveId":  {
-                                                         "__rl":  true,
-                                                         "value":  "My Drive",
-                                                         "mode":  "list",
-                                                         "cachedResultName":  "My Drive",
-                                                         "cachedResultUrl":  "https://drive.google.com/drive/my-drive"
-                                                     },
-                                         "folderId":  {
-                                                          "__rl":  true,
-                                                          "value":  "1Gyz-X4Li1EbPtaxHS9wWJqFOSW9AVmX2",
-                                                          "mode":  "list",
-                                                          "cachedResultName":  "Sequence",
-                                                          "cachedResultUrl":  "https://drive.google.com/drive/folders/1Gyz-X4Li1EbPtaxHS9wWJqFOSW9AVmX2"
-                                                      },
-                                         "options":  {
-
-                                                     }
-                                     },
-                      "type":  "n8n-nodes-base.googleDrive",
-                      "typeVersion":  3,
-                      "position":  [
-                                       3104,
-                                       576
-                                   ],
-                      "id":  "62755e20-7f8b-4f63-a310-41f949f3a923",
-                      "name":  "Upload Shotstack1",
-                      "credentials":  {
-                                          "googleDriveOAuth2Api":  {
-                                                                       "id":  "Ewv49eVtefBoFHBt",
-                                                                       "name":  "Google Drive account_TATE"
-                                                                   }
-                                      },
-                      "disabled":  true
-                  },
-                  {
-                      "parameters":  {
-                                         "method":  "POST",
-                                         "url":  "https://api.shotstack.io/v1/render",
-                                         "authentication":  "genericCredentialType",
-                                         "genericAuthType":  "httpHeaderAuth",
-                                         "sendHeaders":  true,
-                                         "specifyHeaders":  "json",
-                                         "jsonHeaders":  "{\n  \"Content-Type\": \"application/json\"\n}",
-                                         "sendBody":  true,
-                                         "contentType":  "raw",
-                                         "rawContentType":  "JSON",
-                                         "body":  "={{ $json }}",
-                                         "options":  {
-
-                                                     }
-                                     },
-                      "type":  "n8n-nodes-base.httpRequest",
-                      "typeVersion":  4.2,
-                      "position":  [
-                                       1760,
-                                       592
-                                   ],
-                      "id":  "107371f2-f306-4ff0-9920-03dae1391f2d",
-                      "name":  "HTTP Shotstack1",
-                      "credentials":  {
-                                          "httpHeaderAuth":  {
-                                                                 "id":  "ZUNUpkqvoCummIyt",
-                                                                 "name":  "Shotstack API _Tate"
-                                                             }
-                                      },
-                      "disabled":  true
-                  },
-                  {
-                      "parameters":  {
-                                         "amount":  7,
-                                         "unit":  "seconds"
-                                     },
-                      "id":  "100b63a2-ff12-492b-bbe3-dc1d99e5ff12",
-                      "name":  "Wait 7s1",
-                      "type":  "n8n-nodes-base.wait",
-                      "typeVersion":  1,
-                      "position":  [
-                                       1632,
-                                       368
-                                   ],
-                      "webhookId":  "a79c76cf-efcd-4105-9f79-aec6c4357413"
-                  },
-                  {
-                      "parameters":  {
-                                         "jsCode":  "// Keep ONLY the fields needed for the next GET call.\n// Also bump the retry counter here.\nreturn items.map((it) =\u003e {\n  const j = it.json || {};\n\n  const sourceIdStable = String(\n    j.sourceIdStable ?? j.sourceId ?? j.data?.id ?? \u0027\u0027\n  ).trim();\n\n  const ingestEnv = (j.ingestEnv || \u0027v1\u0027).toString();\n\n  const tries = (Number.isFinite(j._tries) ? j._tries : 0) + 1;\n\n  return {\n    json: {\n      sourceIdStable,\n      ingestEnv,\n      _tries: tries\n    }\n  };\n});"
-                                     },
-                      "type":  "n8n-nodes-base.code",
-                      "typeVersion":  2,
-                      "position":  [
-                                       1824,
-                                       368
-                                   ],
-                      "id":  "a92ed081-c205-421b-a0b9-f0b1db555c7b",
-                      "name":  "Prepare GET Input1"
-                  },
-                  {
-                      "parameters":  {
-                                         "url":  "https://www.googleapis.com/drive/v3/files",
-                                         "authentication":  "predefinedCredentialType",
-                                         "nodeCredentialType":  "googleDriveOAuth2Api",
-                                         "sendQuery":  true,
-                                         "specifyQuery":  "json",
-                                         "jsonQuery":  "={\n  \"q\": \"\u00271v0AZE_mQQA-O_HOSut3EUNg_Q87czdOC\u0027 in parents and mimeType contains \u0027video/\u0027 and trashed = false\",\n  \"fields\": \"files(id,name,mimeType,webViewLink,webContentLink),nextPageToken\",\n  \"orderBy\": \"name\",\n  \"pageSize\": 1000,\n  \"spaces\": \"drive\"\n}\n",
-                                         "options":  {
-
-                                                     }
-                                     },
-                      "type":  "n8n-nodes-base.httpRequest",
-                      "typeVersion":  4.2,
-                      "position":  [
-                                       -1184,
-                                       128
-                                   ],
-                      "id":  "0a9d615c-4b3e-437c-b994-a1fd389621e6",
-                      "name":  "List Footage Drive",
-                      "credentials":  {
-                                          "googleDriveOAuth2Api":  {
-                                                                       "id":  "Ewv49eVtefBoFHBt",
-                                                                       "name":  "Google Drive account_TATE"
-                                                                   }
-                                      }
-                  },
-                  {
-                      "parameters":  {
-                                         "url":  "https://www.googleapis.com/drive/v3/files",
-                                         "authentication":  "predefinedCredentialType",
-                                         "nodeCredentialType":  "googleDriveOAuth2Api",
-                                         "sendQuery":  true,
-                                         "specifyQuery":  "json",
-                                         "jsonQuery":  "={\n  \"q\": \"\u00271DeGVrRtGUIFqOSZq5zfSl7CyL7zJa_et\u0027 in parents and (mimeType = \u0027audio/mpeg\u0027 or (mimeType contains \u0027audio/\u0027 and name contains \u0027.mp3\u0027)) and trashed = false\",\n  \"fields\": \"files(id,name,mimeType,webViewLink,webContentLink),nextPageToken\",\n  \"orderBy\": \"name\",\n  \"pageSize\": 1000,\n  \"spaces\": \"drive\",\n  \"supportsAllDrives\": true,\n  \"includeItemsFromAllDrives\": true,\n  \"corpora\": \"allDrives\"\n}\n",
-                                         "options":  {
-
-                                                     }
-                                     },
-                      "type":  "n8n-nodes-base.httpRequest",
-                      "typeVersion":  4.2,
-                      "position":  [
-                                       -1184,
-                                       304
-                                   ],
-                      "id":  "001ae708-82ea-436e-ace3-339cc29a2aa2",
-                      "name":  "List Voiceover Drive",
-                      "credentials":  {
-                                          "googleDriveOAuth2Api":  {
-                                                                       "id":  "Ewv49eVtefBoFHBt",
-                                                                       "name":  "Google Drive account_TATE"
-                                                                   }
-                                      }
-                  },
-                  {
-                      "parameters":  {
-                                         "url":  "https://www.googleapis.com/drive/v3/files",
-                                         "authentication":  "predefinedCredentialType",
-                                         "nodeCredentialType":  "googleDriveOAuth2Api",
-                                         "sendQuery":  true,
-                                         "specifyQuery":  "json",
-                                         "jsonQuery":  "={\n  \"q\": \"\u00271QOcb0Ti9ADBkqicR3DB9u_2lRkSSaDLM\u0027 in parents and (mimeType = \u0027audio/mpeg\u0027 or (mimeType contains \u0027audio/\u0027 and name contains \u0027.mp3\u0027)) and trashed = false\",\n  \"fields\": \"files(id,name,mimeType,webViewLink,webContentLink),nextPageToken\",\n  \"orderBy\": \"name\",\n  \"pageSize\": 1000,\n  \"spaces\": \"drive\",\n  \"supportsAllDrives\": true,\n  \"includeItemsFromAllDrives\": true,\n  \"corpora\": \"allDrives\"\n}\n",
-                                         "options":  {
-
-                                                     }
-                                     },
-                      "type":  "n8n-nodes-base.httpRequest",
-                      "typeVersion":  4.2,
-                      "position":  [
-                                       -1184,
-                                       480
-                                   ],
-                      "id":  "475282e2-2491-499c-afe8-3442db4e641f",
-                      "name":  "List Sound Effects Drive",
-                      "credentials":  {
-                                          "googleDriveOAuth2Api":  {
-                                                                       "id":  "Ewv49eVtefBoFHBt",
-                                                                       "name":  "Google Drive account_TATE"
-                                                                   }
-                                      }
-                  },
-                  {
-                      "parameters":  {
-                                         "url":  "https://www.googleapis.com/drive/v3/files",
-                                         "authentication":  "predefinedCredentialType",
-                                         "nodeCredentialType":  "googleDriveOAuth2Api",
-                                         "sendQuery":  true,
-                                         "specifyQuery":  "json",
-                                         "jsonQuery":  "={\n  \"q\": \"\u00271Dbuwm-oztjjbN4ynrSUvLkECPqih1dRI\u0027 in parents and trashed = false and (mimeType contains \u0027audio/\u0027 or mimeType = \u0027audio/wav\u0027 or mimeType = \u0027audio/x-wav\u0027 or mimeType = \u0027audio/wave\u0027 or mimeType = \u0027application/octet-stream\u0027 or name contains \u0027.wav\u0027 or name contains \u0027.WAV\u0027)\",\n  \"fields\": \"files(id,name,mimeType,webViewLink,webContentLink),nextPageToken\",\n  \"orderBy\": \"name\",\n  \"pageSize\": 1000,\n  \"spaces\": \"drive\",\n  \"supportsAllDrives\": true,\n  \"includeItemsFromAllDrives\": true,\n  \"corpora\": \"allDrives\"\n}\n",
-                                         "options":  {
-
-                                                     }
-                                     },
-                      "type":  "n8n-nodes-base.httpRequest",
-                      "typeVersion":  4.2,
-                      "position":  [
-                                       -1184,
-                                       672
-                                   ],
-                      "id":  "0b6dee6c-e89c-4fb5-80cc-07603dfcf843",
-                      "name":  "List Soundtrack",
-                      "credentials":  {
-                                          "googleDriveOAuth2Api":  {
-                                                                       "id":  "Ewv49eVtefBoFHBt",
-                                                                       "name":  "Google Drive account_TATE"
-                                                                   }
-                                      }
-                  },
-                  {
-                      "parameters":  {
-                                         "jsCode":  "// Normalizes Google Drive results into one item per asset with a valid URL.\n// Works with: HTTP Request (files array), HTTP Request (array body), Google Drive Search (split items).\n\nfunction toArrayFromItems(items) {\n  if (!items || !items.length) return [];\n  if (Array.isArray(items[0].json?.files)) return items[0].json.files;     // { files: [...] }\n  if (Array.isArray(items[0].json)) return items[0].json;                  // body is an array\n  return items.map(i =\u003e i.json);                                           // already split items\n}\n\nfunction directUrl(id, webContentLink) {\n  // Fall back to a reliable direct-download style URL.\n  return webContentLink || (id ? `https://drive.google.com/uc?id=${id}\u0026export=download` : undefined);\n}\n\nfunction shotNum(name, idx) {\n  // Pull the first number from the filename; fallback to index+1.\n  const m = String(name || \u0027\u0027).match(/(\\d{1,4})/);\n  return m ? parseInt(m[1], 10) : (idx + 1);\n}\n\nconst arr = toArrayFromItems(items);\n\n// Sort by name to preserve shot order like 001_, 002_, etc.\narr.sort((a, b) =\u003e String(a.name || \u0027\u0027).localeCompare(String(b.name || \u0027\u0027)));\n\nreturn arr.map((f, idx) =\u003e {\n  const url = directUrl(f.id, f.webContentLink);\n  const mt = f.mimeType || \u0027\u0027;\n  const kind = mt.startsWith(\u0027video\u0027) ? \u0027video\u0027 : (mt.startsWith(\u0027audio\u0027) ? \u0027audio\u0027 : \u0027file\u0027);\n\n  return {\n    json: {\n      id: f.id,\n      name: f.name,\n      mimeType: mt,\n      url,                               // \u003c= will be present now\n      type: kind,                        // \"video\" or \"audio\"\n      shotNumber: shotNum(f.name, idx)\n    }\n  };\n});\n\n"
-                                     },
-                      "id":  "f46bcb1b-33c2-43ef-bed0-912cbea979da",
-                      "name":  "Normalize Videos",
-                      "type":  "n8n-nodes-base.code",
-                      "typeVersion":  2,
-                      "position":  [
-                                       -992,
-                                       128
-                                   ]
-                  },
-                  {
-                      "parameters":  {
-                                         "jsCode":  "// Normalizes Google Drive results into one item per asset with a valid URL.\n// Works with: HTTP Request (files array), HTTP Request (array body), Google Drive Search (split items).\n\nfunction toArrayFromItems(items) {\n  if (!items || !items.length) return [];\n  if (Array.isArray(items[0].json?.files)) return items[0].json.files;     // { files: [...] }\n  if (Array.isArray(items[0].json)) return items[0].json;                  // body is an array\n  return items.map(i =\u003e i.json);                                           // already split items\n}\n\nfunction directUrl(id, webContentLink) {\n  // Fall back to a reliable direct-download style URL.\n  return webContentLink || (id ? `https://drive.google.com/uc?id=${id}\u0026export=download` : undefined);\n}\n\nfunction shotNum(name, idx) {\n  // Pull the first number from the filename; fallback to index+1.\n  const m = String(name || \u0027\u0027).match(/(\\d{1,4})/);\n  return m ? parseInt(m[1], 10) : (idx + 1);\n}\n\nconst arr = toArrayFromItems(items);\n\n// Sort by name to preserve shot order like 001_, 002_, etc.\narr.sort((a, b) =\u003e String(a.name || \u0027\u0027).localeCompare(String(b.name || \u0027\u0027)));\n\nreturn arr.map((f, idx) =\u003e {\n  const url = directUrl(f.id, f.webContentLink);\n  const mt = f.mimeType || \u0027\u0027;\n  const kind = mt.startsWith(\u0027video\u0027) ? \u0027video\u0027 : (mt.startsWith(\u0027audio\u0027) ? \u0027audio\u0027 : \u0027file\u0027);\n\n  return {\n    json: {\n      id: f.id,\n      name: f.name,\n      mimeType: mt,\n      url,                               // \u003c= will be present now\n      type: kind,                        // \"video\" or \"audio\"\n      shotNumber: shotNum(f.name, idx)\n    }\n  };\n});\n"
-                                     },
-                      "id":  "a779b265-3127-4676-9bc9-d1d4901baed7",
-                      "name":  "Normalize VO",
-                      "type":  "n8n-nodes-base.code",
-                      "typeVersion":  2,
-                      "position":  [
-                                       -992,
-                                       304
-                                   ]
-                  },
-                  {
-                      "parameters":  {
-                                         "jsCode":  "// Normalizes Google Drive results into one item per asset with a valid URL.\n// Works with: HTTP Request (files array), HTTP Request (array body), Google Drive Search (split items).\n\nfunction toArrayFromItems(items) {\n  if (!items || !items.length) return [];\n  if (Array.isArray(items[0].json?.files)) return items[0].json.files;     // { files: [...] }\n  if (Array.isArray(items[0].json)) return items[0].json;                  // body is an array\n  return items.map(i =\u003e i.json);                                           // already split items\n}\n\nfunction directUrl(id, webContentLink) {\n  // Fall back to a reliable direct-download style URL.\n  return webContentLink || (id ? `https://drive.google.com/uc?id=${id}\u0026export=download` : undefined);\n}\n\nfunction shotNum(name, idx) {\n  // Pull the first number from the filename; fallback to index+1.\n  const m = String(name || \u0027\u0027).match(/(\\d{1,4})/);\n  return m ? parseInt(m[1], 10) : (idx + 1);\n}\n\nconst arr = toArrayFromItems(items);\n\n// Sort by name to preserve shot order like 001_, 002_, etc.\narr.sort((a, b) =\u003e String(a.name || \u0027\u0027).localeCompare(String(b.name || \u0027\u0027)));\n\nreturn arr.map((f, idx) =\u003e {\n  const url = directUrl(f.id, f.webContentLink);\n  const mt = f.mimeType || \u0027\u0027;\n  const kind = mt.startsWith(\u0027video\u0027) ? \u0027video\u0027 : (mt.startsWith(\u0027audio\u0027) ? \u0027audio\u0027 : \u0027file\u0027);\n\n  return {\n    json: {\n      id: f.id,\n      name: f.name,\n      mimeType: mt,\n      url,                               // \u003c= will be present now\n      type: kind,                        // \"video\" or \"audio\"\n      shotNumber: shotNum(f.name, idx)\n    }\n  };\n});\n"
-                                     },
-                      "id":  "8747b6ed-d463-4921-a547-662dfab8ab1f",
-                      "name":  "Normalize SFX",
-                      "type":  "n8n-nodes-base.code",
-                      "typeVersion":  2,
-                      "position":  [
-                                       -992,
-                                       480
-                                   ]
-                  },
-                  {
-                      "parameters":  {
-                                         "jsCode":  "// Normalize Google Drive results into one item per asset with a valid URL.\n// Adapts behavior by content type:\n//   - Footage (videos only): shotNumber parsed from filename digits.\n//   - SFX (multiple audios): shotNumber = sequential index (ignore filename digits).\n//   - Voiceover (single audio): no shotNumber.\n// Works with: HTTP Request (files array), HTTP Request (array body), Google Drive Search (split items).\n\n// -- Optional override: uncomment to force a mode --\n// const FORCE_MODE = \u0027footage\u0027; // \u0027sfx\u0027 | \u0027voiceover\u0027 | \u0027footage\u0027\n\nfunction toArrayFromItems(items) {\n  if (!items || !items.length) return [];\n  if (Array.isArray(items[0].json?.files)) return items[0].json.files; // { files: [...] }\n  if (Array.isArray(items[0].json)) return items[0].json;              // body is an array\n  return items.map(i =\u003e i.json);                                       // already split items\n}\n\nfunction directUrl(id, webContentLink) {\n  return webContentLink || (id ? `https://drive.google.com/uc?id=${id}\u0026export=download` : undefined);\n}\n\n// Parse first number group anywhere in the name; returns undefined if none\nfunction parseShotFromName(name) {\n  const m = String(name || \u0027\u0027).match(/(\\d{1,4})/);\n  return m ? parseInt(m[1], 10) : undefined;\n}\n\nconst raw = toArrayFromItems(items);\n\n// Identify collection type\nconst countVideo = raw.filter(f =\u003e String(f.mimeType || \u0027\u0027).startsWith(\u0027video\u0027)).length;\nconst countAudio = raw.filter(f =\u003e String(f.mimeType || \u0027\u0027).startsWith(\u0027audio\u0027)).length;\n\nlet mode;\nif (typeof FORCE_MODE !== \u0027undefined\u0027) {\n  mode = FORCE_MODE;\n} else if (countVideo \u003e 0 \u0026\u0026 countAudio === 0) {\n  mode = \u0027footage\u0027;\n} else if (countAudio \u003e 1 \u0026\u0026 countVideo === 0) {\n  mode = \u0027sfx\u0027;\n} else if (countAudio === 1 \u0026\u0026 countVideo === 0) {\n  mode = \u0027voiceover\u0027;\n} else {\n  // Mixed or ambiguous; default to SFX behavior for safety\n  mode = \u0027sfx\u0027;\n}\n\n// Sort inputs for deterministic ordering\nif (mode === \u0027footage\u0027) {\n  // Prefer numeric shot order if present, otherwise fallback to name\n  raw.sort((a, b) =\u003e {\n    const an = parseShotFromName(a.name);\n    const bn = parseShotFromName(b.name);\n    if (an != null \u0026\u0026 bn != null) return an - bn;\n    if (an != null) return -1;\n    if (bn != null) return 1;\n    return String(a.name || \u0027\u0027).localeCompare(String(b.name || \u0027\u0027));\n  });\n} else {\n  // For sfx/voiceover just use name sort\n  raw.sort((a, b) =\u003e String(a.name || \u0027\u0027).localeCompare(String(b.name || \u0027\u0027)));\n}\n\nconst out = raw.map((f, idx) =\u003e {\n  const mt = String(f.mimeType || \u0027\u0027);\n  const kind = mt.startsWith(\u0027video\u0027) ? \u0027video\u0027 : (mt.startsWith(\u0027audio\u0027) ? \u0027audio\u0027 : \u0027file\u0027);\n  const url = directUrl(f.id, f.webContentLink);\n\n  let shotNumber;\n  if (mode === \u0027footage\u0027) {\n    // Parse from filename (e.g., 001, 02, 12)\n    shotNumber = parseShotFromName(f.name);\n    // Fallback to sequential if no digits found\n    if (shotNumber == null) shotNumber = idx + 1;\n  } else if (mode === \u0027sfx\u0027) {\n    // Always sequential, regardless of filename digits\n    shotNumber = idx + 1;\n  } else if (mode === \u0027voiceover\u0027) {\n    // Single long track: no shotNumber\n    shotNumber = undefined;\n  }\n\n  return {\n    json: {\n      id: f.id,\n      name: f.name,\n      mimeType: f.mimeType,\n      url,\n      type: kind,\n      ...(shotNumber != null ? { shotNumber } : {})\n    }\n  };\n});\n\n// If voiceover mode but more than one audio slipped in, keep only the first\nif (mode === \u0027voiceover\u0027 \u0026\u0026 out.length \u003e 1) {\n  return [out[0]];\n}\n\nreturn out;\n"
-                                     },
-                      "id":  "2c46435b-97ae-4214-852b-a22b499b9e53",
-                      "name":  "Normalize Soundtrack",
-                      "type":  "n8n-nodes-base.code",
-                      "typeVersion":  2,
-                      "position":  [
-                                       -992,
-                                       672
-                                   ]
-                  },
-                  {
-                      "parameters":  {
-
-                                     },
-                      "id":  "9150b01f-41ab-476e-832e-57579c949b46",
-                      "name":  "Merge Video + VO",
-                      "type":  "n8n-nodes-base.merge",
-                      "typeVersion":  2,
-                      "position":  [
-                                       -752,
-                                       144
-                                   ]
-                  },
-                  {
-                      "parameters":  {
-
-                                     },
-                      "id":  "e29430b9-8e53-414d-9275-1dd94572353e",
-                      "name":  "Merge All ( + SFX )",
-                      "type":  "n8n-nodes-base.merge",
-                      "typeVersion":  2,
-                      "position":  [
-                                       -576,
-                                       160
-                                   ]
-                  },
-                  {
-                      "parameters":  {
-
-                                     },
-                      "id":  "5627c605-1a5e-4106-a2e4-63c3f6f6a0f2",
-                      "name":  "Merge All ( + Music)",
-                      "type":  "n8n-nodes-base.merge",
-                      "typeVersion":  2,
-                      "position":  [
-                                       -368,
-                                       176
-                                   ]
-                  },
-                  {
-                      "parameters":  {
-                                         "assignments":  {
-                                                             "assignments":  [
-                                                                                 {
-                                                                                     "id":  "07a40d3c-8eb3-4e67-9ed8-b1629d10bd93",
-                                                                                     "name":  "expectCount",
-                                                                                     "value":  "={{$items().length}}",
-                                                                                     "type":  "number"
-                                                                                 }
-                                                                             ]
-                                                         },
-                                         "includeOtherFields":  true,
-                                         "options":  {
-
-                                                     }
-                                     },
-                      "type":  "n8n-nodes-base.set",
-                      "typeVersion":  3.4,
-                      "position":  [
-                                       -160,
-                                       176
-                                   ],
-                      "id":  "0af9693b-4403-47c5-a217-fb715c6869ff",
-                      "name":  "Count Assets",
-                      "executeOnce":  false
-                  },
-                  {
-                      "parameters":  {
-                                         "jsCode":  "// Clear shotNumber for VO/Music so they are NEVER treated as SFX\nconst isGlobalAudio = (n) =\u003e /\\b(vo|voice|narration|music|soundtrack|bgm)\\b/i.test(String(n||\u0027\u0027));\n\nreturn items.map(it =\u003e {\n  const j = it.json || {};\n  if (j.type === \u0027audio\u0027 \u0026\u0026 isGlobalAudio(j.name)) {\n    j.shotNumber = null;        // \u003c???????? critical\n  }\n  return { json: j, binary: it.binary };\n});"
-                                     },
-                      "type":  "n8n-nodes-base.code",
-                      "typeVersion":  2,
-                      "position":  [
-                                       16,
-                                       176
-                                   ],
-                      "id":  "114c7a1d-78bb-40b8-b00e-14071820df59",
-                      "name":  "Upstream fix"
-                  },
-                  {
-                      "parameters":  {
-                                         "method":  "POST",
-                                         "url":  "https://api.shotstack.io/ingest/v1/sources",
-                                         "authentication":  "genericCredentialType",
-                                         "genericAuthType":  "httpHeaderAuth",
-                                         "sendHeaders":  true,
-                                         "specifyHeaders":  "json",
-                                         "jsonHeaders":  "{\n  \"Content-Type\": \"application/json\"\n}",
-                                         "sendBody":  true,
-                                         "specifyBody":  "json",
-                                         "jsonBody":  "={{ { \"url\": $json.url } }}",
-                                         "options":  {
-
-                                                     }
-                                     },
-                      "id":  "8d34b218-1ed5-4b9c-8338-931a2e2da226",
-                      "name":  "Ingest: Create Source",
-                      "type":  "n8n-nodes-base.httpRequest",
-                      "typeVersion":  4,
-                      "position":  [
-                                       -112,
-                                       384
-                                   ],
-                      "credentials":  {
-                                          "httpHeaderAuth":  {
-                                                                 "id":  "ZUNUpkqvoCummIyt",
-                                                                 "name":  "Shotstack API _Tate"
-                                                             }
-                                      }
-                  },
-                  {
-                      "parameters":  {
-                                         "values":  {
-                                                        "string":  [
-                                                                       {
-                                                                           "name":  "sourceId",
-                                                                           "value":  "={{$json.data?.id || $json.id || $json.response?.id}}"
-                                                                       }
-                                                                   ]
-                                                    },
-                                         "options":  {
-
-                                                     }
-                                     },
-                      "id":  "62721f3d-5e34-45dc-b622-927724993471",
-                      "name":  "Set Source Id (keep meta)",
-                      "type":  "n8n-nodes-base.set",
-                      "typeVersion":  2,
-                      "position":  [
-                                       128,
-                                       384
-                                   ]
-                  },
-                  {
-                      "parameters":  {
-                                         "url":  "={{ \u0027https://api.shotstack.io/ingest/\u0027 + ($json.ingestEnv || \u0027v1\u0027) + \u0027/sources/\u0027 + String($json.sourceIdStable || $json.sourceId || $json.data?.id || \u0027\u0027).trim() }}",
-                                         "authentication":  "genericCredentialType",
-                                         "genericAuthType":  "httpHeaderAuth",
-                                         "options":  {
-
-                                                     }
-                                     },
-                      "id":  "bb2f230c-7a8c-427e-8f2d-3429e2338f71",
-                      "name":  "Ingest: Get Source",
-                      "type":  "n8n-nodes-base.httpRequest",
-                      "typeVersion":  4,
-                      "position":  [
-                                       384,
-                                       384
-                                   ],
-                      "credentials":  {
-                                          "httpHeaderAuth":  {
-                                                                 "id":  "ZUNUpkqvoCummIyt",
-                                                                 "name":  "Shotstack API _Tate"
-                                                             }
-                                      },
-                      "onError":  "continueRegularOutput"
-                  },
-                  {
-                      "parameters":  {
-                                         "jsCode":  "// Normalize the GET response into flags, without dropping any fields/binaries.\nreturn items.map((it) =\u003e {\n  const j = it.json || {};\n\n  // Common status fields across n8n/axios/body variants\n  const statusFromBody   = j?.data?.attributes?.status ?? j?.response?.status ?? j?.status ?? \u0027\u0027;\n  const servedFromBody   = j?.data?.attributes?.source ?? j?.response?.url ?? j?.url ?? \u0027\u0027;\n\n  // HTTP code surfaces in various places depending on n8n version/options\n  const httpCode =\n    (typeof j.statusCode === \u0027number\u0027 ? j.statusCode : undefined) ??\n    (typeof j.status === \u0027number\u0027     ? j.status     : undefined) ??\n    (typeof j.response?.status === \u0027number\u0027 ? j.response.status : undefined);\n\n  // Axios-style transport error (no JSON \"errors\" array)\n  const isAxiosErr = j?.name === \u0027AxiosError\u0027 || String(j?.code || \u0027\u0027).startsWith(\u0027ERR_\u0027);\n\n  // API-style error array (Shotstack)\n  const apiErrors  = Array.isArray(j?.errors) ? j.errors : [];\n  const apiErr0    = apiErrors[0] || {};\n\n  // Unified flags\n  const hasHttpErr = Number.isFinite(httpCode) \u0026\u0026 httpCode \u003e= 400;\n  const hasErrors  = (apiErrors.length \u003e 0) || isAxiosErr || hasHttpErr;\n\n  j.status        = String(statusFromBody || \u0027\u0027).trim();\n  j.servedUrl     = String(servedFromBody || \u0027\u0027).trim();\n  j.httpCode      = httpCode ?? null;\n  j.isAxiosError  = !!isAxiosErr;\n  j.hasErrors     = !!hasErrors;\n  j.errorStatus   = apiErr0.status || j.code || (httpCode != null ? String(httpCode) : \u0027\u0027);\n  j.errorTitle    = apiErr0.title  || j.name || \u0027\u0027;\n  j.errorDetail   = apiErr0.detail || j.message || \u0027\u0027;\n\n  return { json: j, binary: it.binary };\n});\n"
-                                     },
-                      "type":  "n8n-nodes-base.code",
-                      "typeVersion":  2,
-                      "position":  [
-                                       704,
-                                       384
-                                   ],
-                      "id":  "8ab9a31e-79f1-4f44-bbd3-b192ca020c28",
-                      "name":  "Normalize Ingest"
-                  },
-                  {
-                      "parameters":  {
-                                         "jsCode":  "/**\n * All Ready Gate (multi-item)\n * Emits poll instructions for every pending asset until all are ready,\n * then emits the full ready asset list once.\n */\nconst store = $getWorkflowStaticData(\u0027\u0027global\u0027\u0027);\n\nconst asObj = (val) =\u003e (val \u0026\u0026 typeof val === \u0027\u0027object\u0027\u0027 \u0026\u0026 !Array.isArray(val) ? val : {});\nif (!Array.isArray(store.readyAssets)) store.readyAssets = [];\nstore.meta = asObj(store.meta);\nstore.seen = asObj(store.seen);\nstore.envById = asObj(store.envById);\n\nconst list = Array.isArray(items) ? items : (typeof $input !== \u0027\u0027undefined\u0027\u0027 ? $input.all() : []);\nlet expected = Number(store.expectedCount) || 0;\nconst pending = new Map();\n\nfor (const it of list) {\n  const json = it.json || {};\n  const attr = json.data?.attributes || {};\n  const id = String(json.sourceIdStable ?? json.sourceId ?? json.data?.id ?? \u0027\u0027).trim();\n  const status = String(json.status ?? attr.status ?? \u0027\u0027).trim().toLowerCase();\n  const servedUrl = String(json.servedUrl ?? attr.source ?? \u0027\u0027).trim();\n  const ingestEnv = String(json.ingestEnv || store.envById[id] || \u0027v1\u0027);\n  const duration = json.duration ?? attr.duration;\n  const type = json.type ?? store.meta[id]?.type;\n  const name = json.name ?? store.meta[id]?.name;\n  const shotNumber = json.shotNumber ?? store.meta[id]?.shotNumber;\n\n  const expectFromItem = Number(json.expectedCount ?? json.expectCount);\n  if (expectFromItem \u003e 0 \u0026\u0026 expectFromItem \u003e expected) {\n    expected = expectFromItem;\n  }\n\n  if (id) {\n    store.seen[id] = status || \u0027\u0027;\n    store.envById[id] = ingestEnv;\n    const meta = store.meta[id] || {};\n    if (type != null) meta.type = type;\n    if (name != null) meta.name = name;\n    if (shotNumber != null) meta.shotNumber = shotNumber;\n    if (duration != null) meta.duration = duration;\n    if (!meta.url) {\n      const url = String(json.url ?? attr.source ?? \u0027\u0027).trim();\n      if (url) meta.url = url;\n    }\n    store.meta[id] = meta;\n  }\n\n  if (status === \u0027ready\u0027 \u0026\u0026 id \u0026\u0026 servedUrl) {\n    if (!store.readyAssets.some((a) =\u003e a.sourceIdStable === id || a.url === servedUrl)) {\n      store.readyAssets.push({\n        sourceIdStable: id,\n        type: store.meta[id]?.type ?? type ?? null,\n        name: store.meta[id]?.name ?? name ?? null,\n        shotNumber: store.meta[id]?.shotNumber ?? shotNumber ?? null,\n        duration: store.meta[id]?.duration ?? duration ?? null,\n        url: servedUrl,\n      });\n    }\n  } else if (id) {\n    pending.set(id, ingestEnv);\n  }\n}\n\nif (!expected) {\n  const metaCount = Object.keys(store.meta).length;\n  if (metaCount \u003e expected) expected = metaCount;\n}\nif (expected \u003e 0) {\n  store.expectedCount = expected;\n}\n\nconst have = store.readyAssets.length;\n\nif (expected \u0026\u0026 have \u003e= expected) {\n  const out = store.readyAssets.map((asset) =\u003e ({\n    json: { ...asset, _route: \u0027emit\u0027, expectedCount: expected },\n  }));\n  store.readyAssets = [];\n  store.meta = {};\n  store.seen = {};\n  store.envById = {};\n  store.expectedCount = 0;\n  return out;\n}\n\nif (pending.size === 0) {\n  for (const [id] of Object.entries(store.meta)) {\n    if (!store.readyAssets.some((a) =\u003e a.sourceIdStable === id)) {\n      pending.set(id, store.envById[id] || \u0027v1\u0027);\n    }\n  }\n}\n\nif (pending.size === 0) {\n  const fallback =\n    store.readyAssets[store.readyAssets.length - 1]?.sourceIdStable ||\n    Object.keys(store.seen)[0] ||\n    Object.keys(store.meta)[0] ||\n    list[0]?.json?.sourceIdStable ||\n    list[0]?.json?.sourceId ||\n    list[0]?.json?.data?.id ||\n    \u0027unknown\u0027;\n  pending.set(String(fallback), store.envById[fallback] || list[0]?.json?.ingestEnv || \u0027v1\u0027);\n}\n\nreturn Array.from(pending.entries()).map(([id, env]) =\u003e {\n  const payload = {\n    _route: \u0027poll\u0027,\n    sourceIdStable: id,\n    ingestEnv: env || \u0027v1\u0027,\n  };\n  if (expected \u003e 0) payload.expectedCount = expected;\n  return { json: payload };\n});"
-                                     },
-                      "type":  "n8n-nodes-base.code",
-                      "typeVersion":  2,
-                      "position":  [
-                                       1200,
-                                       384
-                                   ],
-                      "id":  "01fc724f-ea2d-488e-b481-7aa0dd0e135a",
-                      "name":  "All Ready Gate",
-                      "alwaysOutputData":  false
-                  },
-                  {
-                      "parameters":  {
-                                         "rules":  {
-                                                       "values":  [
-                                                                      {
-                                                                          "conditions":  {
-                                                                                             "options":  {
-                                                                                                             "caseSensitive":  true,
-                                                                                                             "leftValue":  "",
-                                                                                                             "typeValidation":  "strict",
-                                                                                                             "version":  2
-                                                                                                         },
-                                                                                             "conditions":  [
-                                                                                                                {
-                                                                                                                    "leftValue":  "={{ $json._route }}",
-                                                                                                                    "rightValue":  "poll",
-                                                                                                                    "operator":  {
-                                                                                                                                     "type":  "string",
-                                                                                                                                     "operation":  "equals"
-                                                                                                                                 },
-                                                                                                                    "id":  "712642e6-a128-4a83-b362-af62c5254d5b"
-                                                                                                                }
-                                                                                                            ],
-                                                                                             "combinator":  "and"
-                                                                                         },
-                                                                          "renameOutput":  true,
-                                                                          "outputKey":  "Wait"
-                                                                      },
-                                                                      {
-                                                                          "conditions":  {
-                                                                                             "options":  {
-                                                                                                             "caseSensitive":  true,
-                                                                                                             "leftValue":  "",
-                                                                                                             "typeValidation":  "strict",
-                                                                                                             "version":  2
-                                                                                                         },
-                                                                                             "conditions":  [
-                                                                                                                {
-                                                                                                                    "id":  "d6bc9263-174a-4fdb-b0ec-422cce17401b",
-                                                                                                                    "leftValue":  "=  {{ $json._route }}",
-                                                                                                                    "rightValue":  "emit",
-                                                                                                                    "operator":  {
-                                                                                                                                     "type":  "string",
-                                                                                                                                     "operation":  "equals",
-                                                                                                                                     "name":  "filter.operator.equals"
-                                                                                                                                 }
-                                                                                                                }
-                                                                                                            ],
-                                                                                             "combinator":  "and"
-                                                                                         },
-                                                                          "renameOutput":  true,
-                                                                          "outputKey":  "Emit"
-                                                                      }
-                                                                  ]
-                                                   },
-                                         "options":  {
-
-                                                     }
-                                     },
-                      "type":  "n8n-nodes-base.switch",
-                      "typeVersion":  3.2,
-                      "position":  [
-                                       1392,
-                                       384
-                                   ],
-                      "id":  "06c5306e-df8a-49ba-a22a-90f18153a48f",
-                      "name":  "Route After Gate"
-                  },
-                  {
-                      "parameters":  {
-                                         "jsCode":  "const store = $getWorkflowStaticData(\u0027\u0027global\u0027\u0027);\n\nconst asObj = (val) =\u003e (val \u0026\u0026 typeof val === \u0027\u0027object\u0027\u0027 \u0026\u0026 !Array.isArray(val) ? val : {});\nif (!Array.isArray(store.readyAssets)) store.readyAssets = [];\nstore.meta = asObj(store.meta);\nstore.seen = asObj(store.seen);\nstore.envById = asObj(store.envById);\n\nconst list = Array.isArray(items) ? items : (typeof $items === \u0027\u0027function\u0027\u0027 ? $items() : []);\nconst totals = list\n  .map((it) =\u003e Number(it.json?.expectedCount ?? it.json?.expectCount))\n  .filter((n) =\u003e Number.isFinite(n) \u0026\u0026 n \u003e 0);\nconst maxFromField = totals.length ? Math.max(...totals) : 0;\nconst fromLength = list.length;\n\nconst current = Number(store.expectedCount) || 0;\nconst nextExpected = Math.max(current, maxFromField, fromLength);\n\nif (nextExpected \u003e 0 \u0026\u0026 nextExpected !== current) {\n  store.expectedCount = nextExpected;\n}\n\nreturn items;"
-                                     },
-                      "type":  "n8n-nodes-base.code",
-                      "typeVersion":  2,
-                      "position":  [
-                                       -400,
-                                       384
-                                   ],
-                      "id":  "6349f510-35aa-4fc4-a3c4-b04bdf9af0c7",
-                      "name":  "Init Expected Count",
-                      "executeOnce":  false
-                  },
-                  {
-                      "parameters":  {
-                                         "jsCode":  "const store = $getWorkflowStaticData(\u0027\u0027global\u0027\u0027);\nconst asObj = (val) =\u003e (val \u0026\u0026 typeof val === \u0027\u0027object\u0027\u0027 \u0026\u0026 !Array.isArray(val) ? val : {});\nif (!Array.isArray(store.readyAssets)) store.readyAssets = [];\nstore.meta = asObj(store.meta);\nstore.seen = asObj(store.seen);\nstore.envById = asObj(store.envById);\n\nlet expected = Number(store.expectedCount) || 0;\n\nconst result = items.map((item) =\u003e {\n  const out = item;\n  const json = out.json ?? {};\n  const attr = json.data?.attributes ?? {};\n  const id = String(json.sourceIdStable ?? json.sourceId ?? json.data?.id ?? \u0027\u0027).trim();\n  const ingestEnv = String(json.ingestEnv || store.envById[id] || \u0027v1\u0027);\n  const url = String(json.url ?? attr.source ?? \u0027\u0027).trim();\n\n  const expectFromItem = Number(json.expectedCount ?? json.expectCount);\n  if (expectFromItem \u003e 0 \u0026\u0026 expectFromItem \u003e expected) {\n    expected = expectFromItem;\n  }\n\n  if (id) {\n    const meta = store.meta[id] || {};\n    if (json.type != null) meta.type = json.type;\n    if (json.name != null) meta.name = json.name;\n    if (json.shotNumber != null) meta.shotNumber = json.shotNumber;\n    if (json.duration != null) meta.duration = json.duration;\n    if (attr.duration != null \u0026\u0026 meta.duration == null) meta.duration = attr.duration;\n    if (url) meta.url = url;\n    meta.ingestEnv = ingestEnv;\n    store.meta[id] = meta;\n    store.envById[id] = ingestEnv;\n  }\n\n  if (expected \u003e 0) {\n    json.expectedCount = expected;\n  }\n\n  out.json = json;\n  return out;\n});\n\nif (expected \u003e 0) {\n  store.expectedCount = expected;\n}\n\nreturn result;"
-                                     },
-                      "type":  "n8n-nodes-base.code",
-                      "typeVersion":  2,
-                      "position":  [
-                                       944,
-                                       384
-                                   ],
-                      "id":  "92434b46-9d25-4f4f-806a-89e27d923f97",
-                      "name":  "Re-stamp the count"
-                  },
-                  {
-                      "parameters":  {
-                                         "jsCode":  "/********************************************\n * Build Shotstack timeline (defensive globals)\n ********************************************/\nconst DEFAULT_LEN = 5;\nconst VO_VOL = 1.0;\nconst MUSIC_VOL = 0.5;\nconst SFX_VOL = 0.3;\n\nconst asNum = v =\u003e (typeof v === \u0027number\u0027 \u0026\u0026 isFinite(v) ? v : undefined);\nconst lower = s =\u003e String(s || \u0027\u0027).toLowerCase();\nconst extOf = u =\u003e {\n  const m = lower(u || \u0027\u0027).match(/\\.(mp4|mov|mp3|wav|m4a|ogg|webm|flac|aac)(?=($|[?#]))/);\n  return m ? m[1] : \u0027\u0027;\n};\nconst parseShot = (sn) =\u003e {\n  if (sn === null || sn === undefined) return null;\n  const n = typeof sn === \u0027string\u0027 ? parseInt(sn.trim(), 10) : Number(sn);\n  return Number.isFinite(n) ? n : null;\n};\n\nfunction norm(it, idx) {\n  const j = it.json || it;\n  const attr = j.data?.attributes || {};\n  const url = j.servedUrl || j.url || attr.source || attr.input;\n  const name = j.name || j.data?.id || `asset_${idx + 1}`;\n  let type = j.type;\n  if (!type) {\n    if (attr.width) type = \u0027video\u0027;\n    else {\n      const e = extOf(url);\n      type = [\u0027mp4\u0027, \u0027mov\u0027].includes(e) ? \u0027video\u0027\n           : [\u0027mp3\u0027,\u0027wav\u0027,\u0027m4a\u0027,\u0027ogg\u0027,\u0027flac\u0027,\u0027aac\u0027].includes(e) ? \u0027audio\u0027\n           : \u0027file\u0027;\n    }\n  }\n  const shotNumber = parseShot(j.shotNumber ?? j[\u0027Shot Number\u0027] ?? j.shot_number ?? null);\n  const duration = asNum(attr.duration) ?? asNum(j.duration);\n  return { id: j.sourceId || j.data?.id || j.id, name, _name: lower(name), url, type, shotNumber, duration, ext: extOf(url) };\n}\n\nconst all = items.map(norm);\nlet videos = all.filter(x =\u003e x.type === \u0027video\u0027);\nlet audios = all.filter(x =\u003e x.type === \u0027audio\u0027);\n\n// Ensure sequential shot numbers for videos if missing\nlet seq = 1;\nfor (const v of videos) if (v.shotNumber == null) v.shotNumber = seq++;\nvideos.sort((a, b) =\u003e (a.shotNumber || 0) - (b.shotNumber || 0));\n\n// Build video timeline \u0026 total length\nconst clips = [];\nlet cursor = 0;\nconst shotStart = {};\nconst shotLen = {};\n\nfor (const v of videos) {\n  const len = asNum(v.duration) ?? DEFAULT_LEN;\n  clips.push({ asset: { type: \u0027video\u0027, src: v.url }, start: cursor, length: len });\n  shotStart[v.shotNumber] = cursor;\n  shotLen[v.shotNumber] = len;\n  cursor += len;\n}\nconst totalLen = Math.max(cursor, DEFAULT_LEN);\n\n// --- DEFENSIVE SANITIZE: global audio should never have a shot number ---\nconst nameIsGlobal = (n) =\u003e /\\b(vo|voice|narration|music|soundtrack|bgm)\\b/.test(n);\nfor (const a of audios) {\n  if (nameIsGlobal(a._name)) a.shotNumber = null;  // force globals\n}\n\n// If we only have 2 audios total and none clearly marked SFX by name,\n// treat both as globals regardless of any stray shotNumber values.\nconst sfxByName = (a) =\u003e /\\b(sfx|fx|effect)\\b/.test(a._name);\nconst numericAudios = audios.filter(a =\u003e a.shotNumber !== null);\nif (audios.length === 2 \u0026\u0026 numericAudios.length \u003c= 1 \u0026\u0026 !audios.some(sfxByName)) {\n  for (const a of audios) a.shotNumber = null;\n}\n\n// Partition after sanitize\nconst sfx = audios.filter(a =\u003e a.shotNumber !== null);\nlet globals = audios.filter(a =\u003e a.shotNumber === null);\n\n// Pick VO then Music\nconst byName = (arr, re) =\u003e arr.find(a =\u003e re.test(a._name));\nlet voiceover =\n  byName(globals, /\\b(vo|voice|narration)\\b/) ||\n  globals.find(a =\u003e a.ext === \u0027mp3\u0027) ||\n  globals.slice().sort((a,b)=\u003e (asNum(b.duration)||0)-(asNum(a.duration)||0))[0] || null;\n\nif (voiceover) globals = globals.filter(a =\u003e a !== voiceover);\n\nlet music =\n  byName(globals, /\\b(music|soundtrack|bgm)\\b/) ||\n  globals.find(a =\u003e a.ext === \u0027wav\u0027) ||\n  globals.slice().sort((a,b)=\u003e (asNum(b.duration)||0)-(asNum(a.duration)||0))[0] || null;\n\n// Force VO \u0026 Music full length\nif (voiceover \u0026\u0026 voiceover.url) {\n  clips.push({ name: \u0027vo-track\u0027, asset: { type: \u0027audio\u0027, src: voiceover.url, volume: VO_VOL }, start: 0, length: totalLen });\n}\nif (music \u0026\u0026 music.url) {\n  clips.push({ asset: { type: \u0027audio\u0027, src: music.url, volume: MUSIC_VOL }, start: 0, length: totalLen });\n}\n\n// SFX per-shot\nfor (const fx of sfx) {\n  const sn = fx.shotNumber;\n  const start = shotStart[sn];\n  if (start == null) continue;\n  const len = asNum(shotLen[sn]) ?? asNum(fx.duration) ?? DEFAULT_LEN;\n  clips.push({ asset: { type: \u0027audio\u0027, src: fx.url, volume: SFX_VOL }, start, length: len });\n}\n\n// Safety\nfor (const c of clips) if (!(asNum(c.length) \u003e 0)) c.length = DEFAULT_LEN;\n\nreturn [{ json: { timeline: { tracks: [{ clips }] }, output: { format: \u0027mp4\u0027, resolution: \u0027hd\u0027 } } }];"
-                                     },
-                      "id":  "75eab8f0-15a8-4919-84c1-891eae55a9f7",
-                      "name":  "Build Shotstack Timeline",
-                      "type":  "n8n-nodes-base.code",
-                      "typeVersion":  2,
-                      "position":  [
-                                       1552,
-                                       592
-                                   ]
-                  }
-              ],
-    "pinData":  {
-
+  "name": "SEQUENCER_TATE",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1184,
+        -80
+      ],
+      "id": "2d452900-b854-4277-8896-e89561e5b3b6",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.shotstack.io/v1/render/{{ $json.response?.id || $json.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"Content-Type\": \"application/json\"\n}",
+        "options": {}
+      },
+      "id": "6024a843-03d3-478e-a1b5-7d2c66699664",
+      "name": "Check Render Status1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        2368,
+        608
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ZUNUpkqvoCummIyt",
+          "name": "Shotstack API _Tate"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 60,
+        "unit": "seconds"
+      },
+      "id": "bb0a266b-af24-4301-b207-7b1623237b80",
+      "name": "Wait 60s1",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        2144,
+        608
+      ],
+      "webhookId": "263f130d-ee69-41f7-990e-729f6adf9e4d"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "299a7c34-dcff-4991-a73f-5b1a84f188ea",
+              "operator": {
+                "name": "filter.operator.equals",
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{$json.response?.status}}",
+              "rightValue": "done"
+            },
+            {
+              "id": "127d0429-7cc2-48f6-8ef9-7336037dba1b",
+              "leftValue": "={{$json.response?.status}}",
+              "rightValue": "failed",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "f89f348e-058d-45da-b5b6-65e64f80a0f3",
+      "name": "Completed?",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        2592,
+        608
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "01aaad47-31ac-4319-bc1d-a9c89d5465ad",
+              "name": "url",
+              "value": "={{ $json.response?.url ?? $json.url ?? $json.data?.url ?? $json.assets?.[0]?.url ?? '' }}\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2832,
+        592
+      ],
+      "id": "efa060ae-742d-4d3f-8e67-92e94ed2bce1",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "name": "={{$json.fileName || `shotstack_render_${$now}.mp4`}}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1Gyz-X4Li1EbPtaxHS9wWJqFOSW9AVmX2",
+          "mode": "list",
+          "cachedResultName": "Sequence",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1Gyz-X4Li1EbPtaxHS9wWJqFOSW9AVmX2"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3280,
+        592
+      ],
+      "id": "62755e20-7f8b-4f63-a310-41f949f3a923",
+      "name": "Upload Shotstack1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Ewv49eVtefBoFHBt",
+          "name": "Google Drive account_TATE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Keep ONLY the fields needed for the next GET call.\n// Also bump the retry counter here.\nreturn items.map((it) => {\n  const j = it.json || {};\n\n  const sourceIdStable = String(\n    j.sourceIdStable ?? j.sourceId ?? j.data?.id ?? ''\n  ).trim();\n\n  const ingestEnv = (j.ingestEnv || 'v1').toString();\n\n  const tries = (Number.isFinite(j._tries) ? j._tries : 0) + 1;\n\n  return {\n    json: {\n      sourceIdStable,\n      ingestEnv,\n      _tries: tries\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1824,
+        368
+      ],
+      "id": "a92ed081-c205-421b-a0b9-f0b1db555c7b",
+      "name": "Prepare GET Input1"
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/drive/v3/files",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "sendQuery": true,
+        "specifyQuery": "json",
+        "jsonQuery": "={\n  \"q\": \"'1v0AZE_mQQA-O_HOSut3EUNg_Q87czdOC' in parents and mimeType contains 'video/' and trashed = false\",\n  \"fields\": \"files(id,name,mimeType,webViewLink,webContentLink),nextPageToken\",\n  \"orderBy\": \"name\",\n  \"pageSize\": 1000,\n  \"spaces\": \"drive\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1184,
+        128
+      ],
+      "id": "0a9d615c-4b3e-437c-b994-a1fd389621e6",
+      "name": "List Footage Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Ewv49eVtefBoFHBt",
+          "name": "Google Drive account_TATE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/drive/v3/files",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "sendQuery": true,
+        "specifyQuery": "json",
+        "jsonQuery": "={\n  \"q\": \"'1DeGVrRtGUIFqOSZq5zfSl7CyL7zJa_et' in parents and (mimeType = 'audio/mpeg' or (mimeType contains 'audio/' and name contains '.mp3')) and trashed = false\",\n  \"fields\": \"files(id,name,mimeType,webViewLink,webContentLink),nextPageToken\",\n  \"orderBy\": \"name\",\n  \"pageSize\": 1000,\n  \"spaces\": \"drive\",\n  \"supportsAllDrives\": true,\n  \"includeItemsFromAllDrives\": true,\n  \"corpora\": \"allDrives\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1184,
+        304
+      ],
+      "id": "001ae708-82ea-436e-ace3-339cc29a2aa2",
+      "name": "List Voiceover Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Ewv49eVtefBoFHBt",
+          "name": "Google Drive account_TATE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/drive/v3/files",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "sendQuery": true,
+        "specifyQuery": "json",
+        "jsonQuery": "={\n  \"q\": \"'1QOcb0Ti9ADBkqicR3DB9u_2lRkSSaDLM' in parents and (mimeType = 'audio/mpeg' or (mimeType contains 'audio/' and name contains '.mp3')) and trashed = false\",\n  \"fields\": \"files(id,name,mimeType,webViewLink,webContentLink),nextPageToken\",\n  \"orderBy\": \"name\",\n  \"pageSize\": 1000,\n  \"spaces\": \"drive\",\n  \"supportsAllDrives\": true,\n  \"includeItemsFromAllDrives\": true,\n  \"corpora\": \"allDrives\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1184,
+        480
+      ],
+      "id": "475282e2-2491-499c-afe8-3442db4e641f",
+      "name": "List Sound Effects Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Ewv49eVtefBoFHBt",
+          "name": "Google Drive account_TATE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/drive/v3/files",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "sendQuery": true,
+        "specifyQuery": "json",
+        "jsonQuery": "={\n  \"q\": \"'1Dbuwm-oztjjbN4ynrSUvLkECPqih1dRI' in parents and trashed = false and (mimeType contains 'audio/' or mimeType = 'audio/wav' or mimeType = 'audio/x-wav' or mimeType = 'audio/wave' or mimeType = 'application/octet-stream' or name contains '.wav' or name contains '.WAV')\",\n  \"fields\": \"files(id,name,mimeType,webViewLink,webContentLink),nextPageToken\",\n  \"orderBy\": \"name\",\n  \"pageSize\": 1000,\n  \"spaces\": \"drive\",\n  \"supportsAllDrives\": true,\n  \"includeItemsFromAllDrives\": true,\n  \"corpora\": \"allDrives\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1184,
+        672
+      ],
+      "id": "0b6dee6c-e89c-4fb5-80cc-07603dfcf843",
+      "name": "List Soundtrack",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Ewv49eVtefBoFHBt",
+          "name": "Google Drive account_TATE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalizes Google Drive results into one item per asset with a valid URL.\n// Works with: HTTP Request (files array), HTTP Request (array body), Google Drive Search (split items).\n\nfunction toArrayFromItems(items) {\n  if (!items || !items.length) return [];\n  if (Array.isArray(items[0].json?.files)) return items[0].json.files;     // { files: [...] }\n  if (Array.isArray(items[0].json)) return items[0].json;                  // body is an array\n  return items.map(i => i.json);                                           // already split items\n}\n\nfunction directUrl(id, webContentLink) {\n  // Fall back to a reliable direct-download style URL.\n  return webContentLink || (id ? `https://drive.google.com/uc?id=${id}&export=download` : undefined);\n}\n\nfunction shotNum(name, idx) {\n  // Pull the first number from the filename; fallback to index+1.\n  const m = String(name || '').match(/(\\d{1,4})/);\n  return m ? parseInt(m[1], 10) : (idx + 1);\n}\n\nconst arr = toArrayFromItems(items);\n\n// Sort by name to preserve shot order like 001_, 002_, etc.\narr.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));\n\nreturn arr.map((f, idx) => {\n  const url = directUrl(f.id, f.webContentLink);\n  const mt = f.mimeType || '';\n  const kind = mt.startsWith('video') ? 'video' : (mt.startsWith('audio') ? 'audio' : 'file');\n\n  return {\n    json: {\n      id: f.id,\n      name: f.name,\n      mimeType: mt,\n      url,                               // <= will be present now\n      type: kind,                        // \"video\" or \"audio\"\n      shotNumber: shotNum(f.name, idx)\n    }\n  };\n});\n\n"
+      },
+      "id": "f46bcb1b-33c2-43ef-bed0-912cbea979da",
+      "name": "Normalize Videos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -992,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalizes Google Drive results into one item per asset with a valid URL.\n// Works with: HTTP Request (files array), HTTP Request (array body), Google Drive Search (split items).\n\nfunction toArrayFromItems(items) {\n  if (!items || !items.length) return [];\n  if (Array.isArray(items[0].json?.files)) return items[0].json.files;     // { files: [...] }\n  if (Array.isArray(items[0].json)) return items[0].json;                  // body is an array\n  return items.map(i => i.json);                                           // already split items\n}\n\nfunction directUrl(id, webContentLink) {\n  // Fall back to a reliable direct-download style URL.\n  return webContentLink || (id ? `https://drive.google.com/uc?id=${id}&export=download` : undefined);\n}\n\nfunction shotNum(name, idx) {\n  // Pull the first number from the filename; fallback to index+1.\n  const m = String(name || '').match(/(\\d{1,4})/);\n  return m ? parseInt(m[1], 10) : (idx + 1);\n}\n\nconst arr = toArrayFromItems(items);\n\n// Sort by name to preserve shot order like 001_, 002_, etc.\narr.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));\n\nreturn arr.map((f, idx) => {\n  const url = directUrl(f.id, f.webContentLink);\n  const mt = f.mimeType || '';\n  const kind = mt.startsWith('video') ? 'video' : (mt.startsWith('audio') ? 'audio' : 'file');\n\n  return {\n    json: {\n      id: f.id,\n      name: f.name,\n      mimeType: mt,\n      url,                               // <= will be present now\n      type: kind,                        // \"video\" or \"audio\"\n      shotNumber: shotNum(f.name, idx)\n    }\n  };\n});\n"
+      },
+      "id": "a779b265-3127-4676-9bc9-d1d4901baed7",
+      "name": "Normalize VO",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -992,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalizes Google Drive results into one item per asset with a valid URL.\n// Works with: HTTP Request (files array), HTTP Request (array body), Google Drive Search (split items).\n\nfunction toArrayFromItems(items) {\n  if (!items || !items.length) return [];\n  if (Array.isArray(items[0].json?.files)) return items[0].json.files;     // { files: [...] }\n  if (Array.isArray(items[0].json)) return items[0].json;                  // body is an array\n  return items.map(i => i.json);                                           // already split items\n}\n\nfunction directUrl(id, webContentLink) {\n  // Fall back to a reliable direct-download style URL.\n  return webContentLink || (id ? `https://drive.google.com/uc?id=${id}&export=download` : undefined);\n}\n\nfunction shotNum(name, idx) {\n  // Pull the first number from the filename; fallback to index+1.\n  const m = String(name || '').match(/(\\d{1,4})/);\n  return m ? parseInt(m[1], 10) : (idx + 1);\n}\n\nconst arr = toArrayFromItems(items);\n\n// Sort by name to preserve shot order like 001_, 002_, etc.\narr.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));\n\nreturn arr.map((f, idx) => {\n  const url = directUrl(f.id, f.webContentLink);\n  const mt = f.mimeType || '';\n  const kind = mt.startsWith('video') ? 'video' : (mt.startsWith('audio') ? 'audio' : 'file');\n\n  return {\n    json: {\n      id: f.id,\n      name: f.name,\n      mimeType: mt,\n      url,                               // <= will be present now\n      type: kind,                        // \"video\" or \"audio\"\n      shotNumber: shotNum(f.name, idx)\n    }\n  };\n});\n"
+      },
+      "id": "8747b6ed-d463-4921-a547-662dfab8ab1f",
+      "name": "Normalize SFX",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -992,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize Google Drive results into one item per asset with a valid URL.\n// Adapts behavior by content type:\n//   - Footage (videos only): shotNumber parsed from filename digits.\n//   - SFX (multiple audios): shotNumber = sequential index (ignore filename digits).\n//   - Voiceover (single audio): no shotNumber.\n// Works with: HTTP Request (files array), HTTP Request (array body), Google Drive Search (split items).\n\n// -- Optional override: uncomment to force a mode --\n// const FORCE_MODE = 'footage'; // 'sfx' | 'voiceover' | 'footage'\n\nfunction toArrayFromItems(items) {\n  if (!items || !items.length) return [];\n  if (Array.isArray(items[0].json?.files)) return items[0].json.files; // { files: [...] }\n  if (Array.isArray(items[0].json)) return items[0].json;              // body is an array\n  return items.map(i => i.json);                                       // already split items\n}\n\nfunction directUrl(id, webContentLink) {\n  return webContentLink || (id ? `https://drive.google.com/uc?id=${id}&export=download` : undefined);\n}\n\n// Parse first number group anywhere in the name; returns undefined if none\nfunction parseShotFromName(name) {\n  const m = String(name || '').match(/(\\d{1,4})/);\n  return m ? parseInt(m[1], 10) : undefined;\n}\n\nconst raw = toArrayFromItems(items);\n\n// Identify collection type\nconst countVideo = raw.filter(f => String(f.mimeType || '').startsWith('video')).length;\nconst countAudio = raw.filter(f => String(f.mimeType || '').startsWith('audio')).length;\n\nlet mode;\nif (typeof FORCE_MODE !== 'undefined') {\n  mode = FORCE_MODE;\n} else if (countVideo > 0 && countAudio === 0) {\n  mode = 'footage';\n} else if (countAudio > 1 && countVideo === 0) {\n  mode = 'sfx';\n} else if (countAudio === 1 && countVideo === 0) {\n  mode = 'voiceover';\n} else {\n  // Mixed or ambiguous; default to SFX behavior for safety\n  mode = 'sfx';\n}\n\n// Sort inputs for deterministic ordering\nif (mode === 'footage') {\n  // Prefer numeric shot order if present, otherwise fallback to name\n  raw.sort((a, b) => {\n    const an = parseShotFromName(a.name);\n    const bn = parseShotFromName(b.name);\n    if (an != null && bn != null) return an - bn;\n    if (an != null) return -1;\n    if (bn != null) return 1;\n    return String(a.name || '').localeCompare(String(b.name || ''));\n  });\n} else {\n  // For sfx/voiceover just use name sort\n  raw.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));\n}\n\nconst out = raw.map((f, idx) => {\n  const mt = String(f.mimeType || '');\n  const kind = mt.startsWith('video') ? 'video' : (mt.startsWith('audio') ? 'audio' : 'file');\n  const url = directUrl(f.id, f.webContentLink);\n\n  let shotNumber;\n  if (mode === 'footage') {\n    // Parse from filename (e.g., 001, 02, 12)\n    shotNumber = parseShotFromName(f.name);\n    // Fallback to sequential if no digits found\n    if (shotNumber == null) shotNumber = idx + 1;\n  } else if (mode === 'sfx') {\n    // Always sequential, regardless of filename digits\n    shotNumber = idx + 1;\n  } else if (mode === 'voiceover') {\n    // Single long track: no shotNumber\n    shotNumber = undefined;\n  }\n\n  return {\n    json: {\n      id: f.id,\n      name: f.name,\n      mimeType: f.mimeType,\n      url,\n      type: kind,\n      ...(shotNumber != null ? { shotNumber } : {})\n    }\n  };\n});\n\n// If voiceover mode but more than one audio slipped in, keep only the first\nif (mode === 'voiceover' && out.length > 1) {\n  return [out[0]];\n}\n\nreturn out;\n"
+      },
+      "id": "2c46435b-97ae-4214-852b-a22b499b9e53",
+      "name": "Normalize Soundtrack",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -992,
+        672
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "9150b01f-41ab-476e-832e-57579c949b46",
+      "name": "Merge Video + VO",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [
+        -752,
+        144
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "e29430b9-8e53-414d-9275-1dd94572353e",
+      "name": "Merge All ( + SFX )",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [
+        -576,
+        160
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "5627c605-1a5e-4106-a2e4-63c3f6f6a0f2",
+      "name": "Merge All ( + Music)",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [
+        -368,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "07a40d3c-8eb3-4e67-9ed8-b1629d10bd93",
+              "name": "expectCount",
+              "value": "={{$items().length}}",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -160,
+        176
+      ],
+      "id": "0af9693b-4403-47c5-a217-fb715c6869ff",
+      "name": "Count Assets",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Clear shotNumber for VO/Music so they are NEVER treated as SFX\nconst isGlobalAudio = (n) => /\\b(vo|voice|narration|music|soundtrack|bgm)\\b/i.test(String(n||''));\n\nreturn items.map(it => {\n  const j = it.json || {};\n  if (j.type === 'audio' && isGlobalAudio(j.name)) {\n    j.shotNumber = null;        // <â€” critical\n  }\n  return { json: j, binary: it.binary };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        16,
+        176
+      ],
+      "id": "114c7a1d-78bb-40b8-b00e-14071820df59",
+      "name": "Upstream fix"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.shotstack.io/ingest/v1/sources",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"Content-Type\": \"application/json\"\n}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"url\": $json.url } }}",
+        "options": {}
+      },
+      "id": "8d34b218-1ed5-4b9c-8338-931a2e2da226",
+      "name": "Ingest: Create Source",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -112,
+        384
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ZUNUpkqvoCummIyt",
+          "name": "Shotstack API _Tate"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "sourceId",
+              "value": "={{$json.data?.id || $json.id || $json.response?.id}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "62721f3d-5e34-45dc-b622-927724993471",
+      "name": "Set Source Id (keep meta)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        128,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://api.shotstack.io/ingest/' + ($json.ingestEnv || 'v1') + '/sources/' + String($json.sourceIdStable || $json.sourceId || $json.data?.id || '').trim() }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "bb2f230c-7a8c-427e-8f2d-3429e2338f71",
+      "name": "Ingest: Get Source",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        384,
+        384
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ZUNUpkqvoCummIyt",
+          "name": "Shotstack API _Tate"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize the GET response into flags, without dropping any fields/binaries.\nreturn items.map((it) => {\n  const j = it.json || {};\n\n  // Common status fields across n8n/axios/body variants\n  const statusFromBody   = j?.data?.attributes?.status ?? j?.response?.status ?? j?.status ?? '';\n  const servedFromBody   = j?.data?.attributes?.source ?? j?.response?.url ?? j?.url ?? '';\n\n  // HTTP code surfaces in various places depending on n8n version/options\n  const httpCode =\n    (typeof j.statusCode === 'number' ? j.statusCode : undefined) ??\n    (typeof j.status === 'number'     ? j.status     : undefined) ??\n    (typeof j.response?.status === 'number' ? j.response.status : undefined);\n\n  // Axios-style transport error (no JSON \"errors\" array)\n  const isAxiosErr = j?.name === 'AxiosError' || String(j?.code || '').startsWith('ERR_');\n\n  // API-style error array (Shotstack)\n  const apiErrors  = Array.isArray(j?.errors) ? j.errors : [];\n  const apiErr0    = apiErrors[0] || {};\n\n  // Unified flags\n  const hasHttpErr = Number.isFinite(httpCode) && httpCode >= 400;\n  const hasErrors  = (apiErrors.length > 0) || isAxiosErr || hasHttpErr;\n\n  j.status        = String(statusFromBody || '').trim();\n  j.servedUrl     = String(servedFromBody || '').trim();\n  j.httpCode      = httpCode ?? null;\n  j.isAxiosError  = !!isAxiosErr;\n  j.hasErrors     = !!hasErrors;\n  j.errorStatus   = apiErr0.status || j.code || (httpCode != null ? String(httpCode) : '');\n  j.errorTitle    = apiErr0.title  || j.name || '';\n  j.errorDetail   = apiErr0.detail || j.message || '';\n\n  return { json: j, binary: it.binary };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        704,
+        384
+      ],
+      "id": "8ab9a31e-79f1-4f44-bbd3-b192ca020c28",
+      "name": "Normalize Ingest"
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * All Ready Gate (stable, no false polls)\n * Mode: Run once for ALL items\n *\n * Emits:\n *  - While incomplete: one {_route:\"poll\"} per NOT-ready id (never polls a ready item).\n *  - When complete: ALL items with {_route:\"emit\"} and resets state.\n *\n * Completion rules (any one is enough):\n *  1) expectedCount > 0  AND readyById.size >= expectedCount\n *  2) meta is populated   AND EVERY meta id has a ready record (with servedUrl)\n *  3) expectedCount==0 && meta empty, BUT EVERY seen id is 'ready' AND has servedUrl\n */\n\nconst store = $getWorkflowStaticData('global');\n\n// --- init stores ---\nif (!store.meta) store.meta = {};            // id -> {type,name,shotNumber,duration}\nif (!store.seen) store.seen = {};            // id -> last status\nif (!store.readyById) store.readyById = {};  // id -> ready record {url, servedUrl, ...}\nif (!Array.isArray(store.readyAssets)) store.readyAssets = [];\nif (typeof store.expectedCount !== 'number') store.expectedCount = 0;\n\n// --- consume the whole incoming batch ---\nconst batch = $items(); // [{json}, ...]\nfor (const { json } of batch) {\n  const attr      = json?.data?.attributes || {};\n  const id        = String(json?.sourceIdStable || json?.sourceId || json?.data?.id || '').trim();\n  const status    = String(json?.status || attr?.status || '').trim().toLowerCase();\n  const servedUrl = String(json?.servedUrl || attr?.source || '').trim();\n  const duration  = json?.duration ?? attr?.duration;\n\n  // allow upstream to seed meta/expectedCount in-band\n  if (json && typeof json.expectedCount === 'number') store.expectedCount = json.expectedCount;\n  if (json && json.meta) {\n    if (Array.isArray(json.meta)) {\n      for (const m of json.meta) {\n        if (!m?.id) continue;\n        const cur = store.meta[m.id] || {};\n        store.meta[m.id] = {\n          type:       cur.type ?? m.type,\n          name:       cur.name ?? m.name,\n          shotNumber: cur.shotNumber ?? m.shotNumber,\n          duration:   cur.duration ?? m.duration,\n        };\n      }\n    } else {\n      for (const [mid, m] of Object.entries(json.meta)) {\n        const cur = store.meta[mid] || {};\n        store.meta[mid] = {\n          type:       cur.type ?? m?.type,\n          name:       cur.name ?? m?.name,\n          shotNumber: cur.shotNumber ?? m?.shotNumber,\n          duration:   cur.duration ?? m?.duration,\n        };\n      }\n    }\n  }\n\n  if (id) store.seen[id] = status || '';\n\n  // Count as READY only when we have the ingested URL\n  if (id && status === 'ready' && servedUrl) {\n    const m = store.meta[id] || {};\n    const rec = {\n      sourceIdStable: id,\n      type:       m.type ?? json?.type,\n      name:       m.name ?? json?.name,\n      shotNumber: m.shotNumber ?? json?.shotNumber,\n      duration:   m.duration ?? duration,\n      url:        servedUrl,     // legacy name\n      servedUrl,                 // common downstream name\n    };\n    // upsert by id\n    store.readyById[id] = rec;\n\n    // keep legacy array in sync\n    const idx = store.readyAssets.findIndex(a => a.sourceIdStable === id);\n    if (idx >= 0) store.readyAssets[idx] = rec;\n    else store.readyAssets.push(rec);\n  }\n}\n\n// --- compute universes & readiness ---\nconst metaIds   = Object.keys(store.meta);\nconst metaCount = metaIds.length;\nconst seenIds   = Object.keys(store.seen);\nconst readyIds  = Object.keys(store.readyById);\n\nlet need = Number(store.expectedCount) || 0;\nif (!need && metaCount) need = metaCount;\n\n// primary rule: explicit expectedCount\nconst rule1_allReady = (need > 0) && (readyIds.length >= need);\n\n// secondary rule: meta is authoritative universe and all present in readyById\nconst rule2_allReady = (metaCount > 0) && metaIds.every(id => !!store.readyById[id]);\n\n// tertiary rule: no count/meta known, but EVERYTHING we've seen is actually ready w/servedUrl\nconst allSeenAreReady = (seenIds.length > 0) &&\n  seenIds.every(id => (store.seen[id] === 'ready') && !!store.readyById[id]);\nconst rule3_allReady = (need === 0) && (metaCount === 0) && allSeenAreReady;\n\nconst allReady = rule1_allReady || rule2_allReady || rule3_allReady;\n\n// --- emit all & reset when complete ---\nif (allReady) {\n  const out = readyIds.map(id => ({ json: { ...store.readyById[id], _route: 'emit' } }));\n\n  // reset state for next cycle\n  store.readyAssets = [];\n  store.readyById = {};\n  store.meta = {};\n  store.seen = {};\n  store.expectedCount = 0;\n\n  return out; // ALL emit items\n}\n\n// --- partial: emit a POLL per not-ready id (never poll a 'ready' id) ---\nconst universe = (metaCount > 0) ? metaIds : seenIds;\n\n// NOT-ready means: no ready record yet OR last seen status is not 'ready'\nconst notReadyIds = universe.filter(id => {\n  if (!store.readyById[id]) return true;               // no servedUrl yet\n  const st = (store.seen[id] || '').toLowerCase();\n  return st !== 'ready';\n});\n\n// choose an ingestEnv from the batch (fallback v1)\nconst ingestEnv = batch.find(i => i.json?.ingestEnv)?.json.ingestEnv || 'v1';\n\n// Build one poll per not-ready id. If we truly know none yet, return an empty array.\n// (Do NOT poll \"ready\" ids; avoids endless loops.)\nconst uniqueNotReady = Array.from(new Set(notReadyIds)).filter(Boolean);\nconst polls = uniqueNotReady.map(id => ({\n  json: { _route: 'poll', sourceIdStable: id, ingestEnv }\n}));\n\nreturn polls;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        384
+      ],
+      "id": "01fc724f-ea2d-488e-b481-7aa0dd0e135a",
+      "name": "All Ready Gate",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
                 },
-    "connections":  {
-                        "When clicking ???Execute workflow???":  {
-                                                                     "main":  [
-                                                                                  [
-                                                                                      {
-                                                                                          "node":  "List Footage Drive",
-                                                                                          "type":  "main",
-                                                                                          "index":  0
-                                                                                      },
-                                                                                      {
-                                                                                          "node":  "List Voiceover Drive",
-                                                                                          "type":  "main",
-                                                                                          "index":  0
-                                                                                      },
-                                                                                      {
-                                                                                          "node":  "List Sound Effects Drive",
-                                                                                          "type":  "main",
-                                                                                          "index":  0
-                                                                                      },
-                                                                                      {
-                                                                                          "node":  "List Soundtrack",
-                                                                                          "type":  "main",
-                                                                                          "index":  0
-                                                                                      }
-                                                                                  ]
-                                                                              ]
-                                                                 },
-                        "Check Render Status1":  {
-                                                     "main":  [
-                                                                  [
-                                                                      {
-                                                                          "node":  "Completed?",
-                                                                          "type":  "main",
-                                                                          "index":  0
-                                                                      }
-                                                                  ]
-                                                              ]
-                                                 },
-                        "Wait 60s1":  {
-                                          "main":  [
-                                                       [
-                                                           {
-                                                               "node":  "Check Render Status1",
-                                                               "type":  "main",
-                                                               "index":  0
-                                                           }
-                                                       ]
-                                                   ]
-                                      },
-                        "Completed?":  {
-                                           "main":  [
-                                                        [
-                                                            {
-                                                                "node":  "Edit Fields",
-                                                                "type":  "main",
-                                                                "index":  0
-                                                            }
-                                                        ],
-                                                        [
-                                                            {
-                                                                "node":  "Wait 60s1",
-                                                                "type":  "main",
-                                                                "index":  0
-                                                            }
-                                                        ]
-                                                    ]
-                                       },
-                        "Edit Fields":  {
-                                            "main":  [
-                                                         [
-                                                             {
-                                                                 "node":  "Download the file1",
-                                                                 "type":  "main",
-                                                                 "index":  0
-                                                             }
-                                                         ]
-                                                     ]
-                                        },
-                        "Download the file1":  {
-                                                   "main":  [
-                                                                [
-                                                                    {
-                                                                        "node":  "Upload Shotstack1",
-                                                                        "type":  "main",
-                                                                        "index":  0
-                                                                    }
-                                                                ]
-                                                            ]
-                                               },
-                        "HTTP Shotstack1":  {
-                                                "main":  [
-                                                             [
-                                                                 {
-                                                                     "node":  "Wait 60s1",
-                                                                     "type":  "main",
-                                                                     "index":  0
-                                                                 }
-                                                             ]
-                                                         ]
-                                            },
-                        "Wait 7s1":  {
-                                         "main":  [
-                                                      [
-                                                          {
-                                                              "node":  "Prepare GET Input1",
-                                                              "type":  "main",
-                                                              "index":  0
-                                                          }
-                                                      ]
-                                                  ]
-                                     },
-                        "Prepare GET Input1":  {
-                                                   "main":  [
-                                                                [
-                                                                    {
-                                                                        "node":  "Ingest: Get Source",
-                                                                        "type":  "main",
-                                                                        "index":  0
-                                                                    }
-                                                                ]
-                                                            ]
-                                               },
-                        "List Footage Drive":  {
-                                                   "main":  [
-                                                                [
-                                                                    {
-                                                                        "node":  "Normalize Videos",
-                                                                        "type":  "main",
-                                                                        "index":  0
-                                                                    }
-                                                                ]
-                                                            ]
-                                               },
-                        "List Voiceover Drive":  {
-                                                     "main":  [
-                                                                  [
-                                                                      {
-                                                                          "node":  "Normalize VO",
-                                                                          "type":  "main",
-                                                                          "index":  0
-                                                                      }
-                                                                  ]
-                                                              ]
-                                                 },
-                        "List Sound Effects Drive":  {
-                                                         "main":  [
-                                                                      [
-                                                                          {
-                                                                              "node":  "Normalize SFX",
-                                                                              "type":  "main",
-                                                                              "index":  0
-                                                                          }
-                                                                      ]
-                                                                  ]
-                                                     },
-                        "List Soundtrack":  {
-                                                "main":  [
-                                                             [
-                                                                 {
-                                                                     "node":  "Normalize Soundtrack",
-                                                                     "type":  "main",
-                                                                     "index":  0
-                                                                 }
-                                                             ]
-                                                         ]
-                                            },
-                        "Normalize Videos":  {
-                                                 "main":  [
-                                                              [
-                                                                  {
-                                                                      "node":  "Merge Video + VO",
-                                                                      "type":  "main",
-                                                                      "index":  0
-                                                                  }
-                                                              ]
-                                                          ]
-                                             },
-                        "Normalize VO":  {
-                                             "main":  [
-                                                          [
-                                                              {
-                                                                  "node":  "Merge Video + VO",
-                                                                  "type":  "main",
-                                                                  "index":  1
-                                                              }
-                                                          ]
-                                                      ]
-                                         },
-                        "Normalize SFX":  {
-                                              "main":  [
-                                                           [
-                                                               {
-                                                                   "node":  "Merge All ( + SFX )",
-                                                                   "type":  "main",
-                                                                   "index":  1
-                                                               }
-                                                           ]
-                                                       ]
-                                          },
-                        "Normalize Soundtrack":  {
-                                                     "main":  [
-                                                                  [
-                                                                      {
-                                                                          "node":  "Merge All ( + Music)",
-                                                                          "type":  "main",
-                                                                          "index":  1
-                                                                      }
-                                                                  ]
-                                                              ]
-                                                 },
-                        "Merge Video + VO":  {
-                                                 "main":  [
-                                                              [
-                                                                  {
-                                                                      "node":  "Merge All ( + SFX )",
-                                                                      "type":  "main",
-                                                                      "index":  0
-                                                                  }
-                                                              ]
-                                                          ]
-                                             },
-                        "Merge All ( + SFX )":  {
-                                                    "main":  [
-                                                                 [
-                                                                     {
-                                                                         "node":  "Merge All ( + Music)",
-                                                                         "type":  "main",
-                                                                         "index":  0
-                                                                     }
-                                                                 ]
-                                                             ]
-                                                },
-                        "Merge All ( + Music)":  {
-                                                     "main":  [
-                                                                  [
-                                                                      {
-                                                                          "node":  "Count Assets",
-                                                                          "type":  "main",
-                                                                          "index":  0
-                                                                      }
-                                                                  ]
-                                                              ]
-                                                 },
-                        "Count Assets":  {
-                                             "main":  [
-                                                          [
-                                                              {
-                                                                  "node":  "Upstream fix",
-                                                                  "type":  "main",
-                                                                  "index":  0
-                                                              }
-                                                          ]
-                                                      ]
-                                         },
-                        "Upstream fix":  {
-                                             "main":  [
-                                                          [
-                                                              {
-                                                                  "node":  "Init Expected Count",
-                                                                  "type":  "main",
-                                                                  "index":  0
-                                                              }
-                                                          ]
-                                                      ]
-                                         },
-                        "Ingest: Create Source":  {
-                                                      "main":  [
-                                                                   [
-                                                                       {
-                                                                           "node":  "Set Source Id (keep meta)",
-                                                                           "type":  "main",
-                                                                           "index":  0
-                                                                       }
-                                                                   ]
-                                                               ]
-                                                  },
-                        "Set Source Id (keep meta)":  {
-                                                          "main":  [
-                                                                       [
-                                                                           {
-                                                                               "node":  "Ingest: Get Source",
-                                                                               "type":  "main",
-                                                                               "index":  0
-                                                                           }
-                                                                       ]
-                                                                   ]
-                                                      },
-                        "Ingest: Get Source":  {
-                                                   "main":  [
-                                                                [
-                                                                    {
-                                                                        "node":  "Normalize Ingest",
-                                                                        "type":  "main",
-                                                                        "index":  0
-                                                                    }
-                                                                ]
-                                                            ]
-                                               },
-                        "Normalize Ingest":  {
-                                                 "main":  [
-                                                              [
-                                                                  {
-                                                                      "node":  "Re-stamp the count",
-                                                                      "type":  "main",
-                                                                      "index":  0
-                                                                  }
-                                                              ]
-                                                          ]
-                                             },
-                        "Route After Gate":  {
-                                                 "main":  [
-                                                              [
-                                                                  {
-                                                                      "node":  "Wait 7s1",
-                                                                      "type":  "main",
-                                                                      "index":  0
-                                                                  }
-                                                              ],
-                                                              [
-                                                                  {
-                                                                      "node":  "Build Shotstack Timeline",
-                                                                      "type":  "main",
-                                                                      "index":  0
-                                                                  }
-                                                              ]
-                                                          ]
-                                             },
-                        "All Ready Gate":  {
-                                               "main":  [
-                                                            [
-                                                                {
-                                                                    "node":  "Route After Gate",
-                                                                    "type":  "main",
-                                                                    "index":  0
-                                                                }
-                                                            ]
-                                                        ]
-                                           },
-                        "Init Expected Count":  {
-                                                    "main":  [
-                                                                 [
-                                                                     {
-                                                                         "node":  "Ingest: Create Source",
-                                                                         "type":  "main",
-                                                                         "index":  0
-                                                                     }
-                                                                 ]
-                                                             ]
-                                                },
-                        "Re-stamp the count":  {
-                                                   "main":  [
-                                                                [
-                                                                    {
-                                                                        "node":  "All Ready Gate",
-                                                                        "type":  "main",
-                                                                        "index":  0
-                                                                    }
-                                                                ]
-                                                            ]
-                                               },
-                        "Build Shotstack Timeline":  {
-                                                         "main":  [
-                                                                      [
-                                                                          {
-                                                                              "node":  "HTTP Shotstack1",
-                                                                              "type":  "main",
-                                                                              "index":  0
-                                                                          }
-                                                                      ]
-                                                                  ]
-                                                     }
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json._route }}",
+                    "rightValue": "poll",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
                     },
-    "active":  false,
-    "settings":  {
-                     "executionOrder":  "v1"
-                 },
-    "versionId":  "a7030eb6-6a03-4829-a1e5-89ad46c86f0d",
-    "meta":  {
-                 "instanceId":  "d9ecf96d4849a9f2df9259c4fe9802ccdefd36f7c01bc7c2797024859526a70c"
-             },
-    "id":  "70K5cqhPgxUuRVbf",
-    "tags":  [
-
-             ]
+                    "id": "1cc30b44-3e0c-4ba5-8789-c25202712114"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Poll"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "7657725b-18b3-4e0b-949a-1092cae842fa",
+                    "leftValue": "={{ $json._route }}",
+                    "rightValue": "emit",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Emit"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1392,
+        384
+      ],
+      "id": "06c5306e-df8a-49ba-a22a-90f18153a48f",
+      "name": "Route After Gate"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Init Expected Count (Execute Once)\nconst data = $getWorkflowStaticData('global');\nif (!Number.isFinite(data.expectedCount) || data.expectedCount <= 0) {\n  data.expectedCount = $items().length; // total assets to ingest\n}\nreturn items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        384
+      ],
+      "id": "6349f510-35aa-4fc4-a3c4-b04bdf9af0c7",
+      "name": "Init Expected Count",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $getWorkflowStaticData('global');\nconst count = Number(data.expectedCount) || 0;\nreturn items.map(it => {\n  it.json.expectedCount = count;\n  return it;\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        944,
+        384
+      ],
+      "id": "92434b46-9d25-4f4f-806a-89e27d923f97",
+      "name": "Re-stamp the count"
+    },
+    {
+      "parameters": {
+        "jsCode": "/********************************************\n * Build Shotstack timeline (defensive globals)\n ********************************************/\nconst DEFAULT_LEN = 5;\nconst VO_VOL = 1.0;\nconst MUSIC_VOL = 0.1;\nconst SFX_VOL = 0.1;\n\nconst asNum = v => (typeof v === 'number' && isFinite(v) ? v : undefined);\nconst lower = s => String(s || '').toLowerCase();\nconst extOf = u => {\n  const m = lower(u || '').match(/\\.(mp4|mov|mp3|wav|m4a|ogg|webm|flac|aac)(?=($|[?#]))/);\n  return m ? m[1] : '';\n};\nconst parseShot = (sn) => {\n  if (sn === null || sn === undefined) return null;\n  const n = typeof sn === 'string' ? parseInt(sn.trim(), 10) : Number(sn);\n  return Number.isFinite(n) ? n : null;\n};\n\nfunction norm(it, idx) {\n  const j = it.json || it;\n  const attr = j.data?.attributes || {};\n  const url = j.servedUrl || j.url || attr.source || attr.input;\n  const name = j.name || j.data?.id || `asset_${idx + 1}`;\n  let type = j.type;\n  if (!type) {\n    if (attr.width) type = 'video';\n    else {\n      const e = extOf(url);\n      type = ['mp4', 'mov'].includes(e) ? 'video'\n           : ['mp3','wav','m4a','ogg','flac','aac'].includes(e) ? 'audio'\n           : 'file';\n    }\n  }\n  const shotNumber = parseShot(j.shotNumber ?? j['Shot Number'] ?? j.shot_number ?? null);\n  const duration = asNum(attr.duration) ?? asNum(j.duration);\n  return { id: j.sourceId || j.data?.id || j.id, name, _name: lower(name), url, type, shotNumber, duration, ext: extOf(url) };\n}\n\nconst all = items.map(norm);\nlet videos = all.filter(x => x.type === 'video');\nlet audios = all.filter(x => x.type === 'audio');\n\n// Ensure sequential shot numbers for videos if missing\nlet seq = 1;\nfor (const v of videos) if (v.shotNumber == null) v.shotNumber = seq++;\nvideos.sort((a, b) => (a.shotNumber || 0) - (b.shotNumber || 0));\n\n// Build video timeline & total length\nconst clips = [];\nlet cursor = 0;\nconst shotStart = {};\nconst shotLen = {};\n\nfor (const v of videos) {\n  const len = asNum(v.duration) ?? DEFAULT_LEN;\n  clips.push({ asset: { type: 'video', src: v.url }, start: cursor, length: len });\n  shotStart[v.shotNumber] = cursor;\n  shotLen[v.shotNumber] = len;\n  cursor += len;\n}\nconst totalLen = Math.max(cursor, DEFAULT_LEN);\n\n// --- DEFENSIVE SANITIZE: global audio should never have a shot number ---\nconst nameIsGlobal = (n) => /\\b(vo|voice|narration|music|soundtrack|bgm)\\b/.test(n);\nfor (const a of audios) {\n  if (nameIsGlobal(a._name)) a.shotNumber = null;  // force globals\n}\n\n// If we only have 2 audios total and none clearly marked SFX by name,\n// treat both as globals regardless of any stray shotNumber values.\nconst sfxByName = (a) => /\\b(sfx|fx|effect)\\b/.test(a._name);\nconst numericAudios = audios.filter(a => a.shotNumber !== null);\nif (audios.length === 2 && numericAudios.length <= 1 && !audios.some(sfxByName)) {\n  for (const a of audios) a.shotNumber = null;\n}\n\n// Partition after sanitize\nconst sfx = audios.filter(a => a.shotNumber !== null);\nlet globals = audios.filter(a => a.shotNumber === null);\n\n// Pick VO then Music\nconst byName = (arr, re) => arr.find(a => re.test(a._name));\nlet voiceover =\n  byName(globals, /\\b(vo|voice|narration)\\b/) ||\n  globals.find(a => a.ext === 'mp3') ||\n  globals.slice().sort((a,b)=> (asNum(b.duration)||0)-(asNum(a.duration)||0))[0] || null;\n\nif (voiceover) globals = globals.filter(a => a !== voiceover);\n\nlet music =\n  byName(globals, /\\b(music|soundtrack|bgm)\\b/) ||\n  globals.find(a => a.ext === 'wav') ||\n  globals.slice().sort((a,b)=> (asNum(b.duration)||0)-(asNum(a.duration)||0))[0] || null;\n\n// Force VO & Music full length\nif (voiceover && voiceover.url) {\n  clips.push({ name: 'vo-track', asset: { type: 'audio', src: voiceover.url, volume: VO_VOL }, start: 0, length: totalLen });\n}\nif (music && music.url) {\n  clips.push({ asset: { type: 'audio', src: music.url, volume: MUSIC_VOL }, start: 0, length: totalLen });\n}\n\n// SFX per-shot\nfor (const fx of sfx) {\n  const sn = fx.shotNumber;\n  const start = shotStart[sn];\n  if (start == null) continue;\n  const len = asNum(shotLen[sn]) ?? asNum(fx.duration) ?? DEFAULT_LEN;\n  clips.push({ asset: { type: 'audio', src: fx.url, volume: SFX_VOL }, start, length: len });\n}\n\n// Safety\nfor (const c of clips) if (!(asNum(c.length) > 0)) c.length = DEFAULT_LEN;\n\nreturn [{ json: { timeline: { tracks: [{ clips }] }, output: { format: 'mp4', resolution: 'hd' } } }];"
+      },
+      "id": "75eab8f0-15a8-4919-84c1-891eae55a9f7",
+      "name": "Build Shotstack Timeline",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1392,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 10,
+        "unit": "seconds"
+      },
+      "id": "100b63a2-ff12-492b-bbe3-dc1d99e5ff12",
+      "name": "Wait 10s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        1632,
+        368
+      ],
+      "webhookId": "a79c76cf-efcd-4105-9f79-aec6c4357413"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.shotstack.io/v1/render",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"Content-Type\": \"application/json\"\n}",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "JSON",
+        "body": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1904,
+        608
+      ],
+      "id": "107371f2-f306-4ff0-9920-03dae1391f2d",
+      "name": "HTTP Shotstack",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ZUNUpkqvoCummIyt",
+          "name": "Shotstack API _Tate"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Sanitize Shotstack payload: remove unsupported fields from clips\n// Place this directly before the HTTP node sending to Shotstack.\n\nconst sanitizeTimeline = (timeline) => {\n  if (!timeline || !Array.isArray(timeline.tracks)) return timeline;\n  for (const track of timeline.tracks) {\n    if (!track || !Array.isArray(track.clips)) continue;\n    for (const clip of track.clips) {\n      if (!clip || typeof clip !== 'object') continue;\n\n      // Shotstack doesn't support a 'name' on clip objects\n      if ('name' in clip) delete clip.name;\n\n      // Defensive: also remove 'name' if it slipped into the asset\n      if (clip.asset && typeof clip.asset === 'object' && 'name' in clip.asset) {\n        delete clip.asset.name;\n      }\n    }\n  }\n  return timeline;\n};\n\nconst out = [];\nfor (const item of $items()) {\n  const json = { ...item.json };\n  if (json.timeline) {\n    json.timeline = sanitizeTimeline(json.timeline);\n  }\n  out.push({ json });\n}\nreturn out;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1648,
+        608
+      ],
+      "id": "f5ffe8ae-6698-4c50-bf01-198a5d4d5664",
+      "name": "Remove Tags"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3056,
+        592
+      ],
+      "id": "d9fdb868-b089-4299-b7cf-2d644d73b759",
+      "name": "Download the File"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "List Footage Drive",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "List Voiceover Drive",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "List Sound Effects Drive",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "List Soundtrack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Render Status1": {
+      "main": [
+        [
+          {
+            "node": "Completed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 60s1": {
+      "main": [
+        [
+          {
+            "node": "Check Render Status1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Completed?": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 60s1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Download the File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare GET Input1": {
+      "main": [
+        [
+          {
+            "node": "Ingest: Get Source",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Footage Drive": {
+      "main": [
+        [
+          {
+            "node": "Normalize Videos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Voiceover Drive": {
+      "main": [
+        [
+          {
+            "node": "Normalize VO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Sound Effects Drive": {
+      "main": [
+        [
+          {
+            "node": "Normalize SFX",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Soundtrack": {
+      "main": [
+        [
+          {
+            "node": "Normalize Soundtrack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Videos": {
+      "main": [
+        [
+          {
+            "node": "Merge Video + VO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize VO": {
+      "main": [
+        [
+          {
+            "node": "Merge Video + VO",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Normalize SFX": {
+      "main": [
+        [
+          {
+            "node": "Merge All ( + SFX )",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Normalize Soundtrack": {
+      "main": [
+        [
+          {
+            "node": "Merge All ( + Music)",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Video + VO": {
+      "main": [
+        [
+          {
+            "node": "Merge All ( + SFX )",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge All ( + SFX )": {
+      "main": [
+        [
+          {
+            "node": "Merge All ( + Music)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge All ( + Music)": {
+      "main": [
+        [
+          {
+            "node": "Count Assets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Count Assets": {
+      "main": [
+        [
+          {
+            "node": "Upstream fix",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upstream fix": {
+      "main": [
+        [
+          {
+            "node": "Init Expected Count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ingest: Create Source": {
+      "main": [
+        [
+          {
+            "node": "Set Source Id (keep meta)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Source Id (keep meta)": {
+      "main": [
+        [
+          {
+            "node": "Ingest: Get Source",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ingest: Get Source": {
+      "main": [
+        [
+          {
+            "node": "Normalize Ingest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Ingest": {
+      "main": [
+        [
+          {
+            "node": "Re-stamp the count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route After Gate": {
+      "main": [
+        [
+          {
+            "node": "Wait 10s",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Shotstack Timeline",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "All Ready Gate": {
+      "main": [
+        [
+          {
+            "node": "Route After Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Init Expected Count": {
+      "main": [
+        [
+          {
+            "node": "Ingest: Create Source",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Re-stamp the count": {
+      "main": [
+        [
+          {
+            "node": "All Ready Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Shotstack Timeline": {
+      "main": [
+        [
+          {
+            "node": "Remove Tags",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 10s": {
+      "main": [
+        [
+          {
+            "node": "Prepare GET Input1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Shotstack": {
+      "main": [
+        [
+          {
+            "node": "Wait 60s1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Tags": {
+      "main": [
+        [
+          {
+            "node": "HTTP Shotstack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download the File": {
+      "main": [
+        [
+          {
+            "node": "Upload Shotstack1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c4871228-f270-43a9-9df7-df66d112daaf",
+  "meta": {
+    "instanceId": "d9ecf96d4849a9f2df9259c4fe9802ccdefd36f7c01bc7c2797024859526a70c"
+  },
+  "id": "70K5cqhPgxUuRVbf",
+  "tags": []
 }
