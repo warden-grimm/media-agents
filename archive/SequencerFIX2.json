@@ -1,0 +1,217 @@
+{
+  "name": "SEQUENCER_TATE",
+  "nodes": [
+    /* ... your existing nodes unchanged ... */,
+
+    // NEW: Split In Batches (assets)
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "7b9a1db2-8f8b-4e3e-9b56-accb1e7f7e11",
+      "name": "Split In Batches (assets)",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 1,
+      "position": [ -64, 80 ]
+    },
+
+    // NEW: Accumulate Ready
+    {
+      "parameters": {
+        "jsCode": "// Append this ready item to a global accumulator.\nconst store = this.getWorkflowStaticData('global');\nif (!Array.isArray(store.readyAssets)) store.readyAssets = [];\nstore.readyAssets.push(items[0].json);\nreturn items;"
+      },
+      "id": "3a7c3d7b-0f2d-4e9f-8b8d-2b7f7cb2f7a1",
+      "name": "Accumulate Ready",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [ 1216, 272 ]
+    },
+
+    // NEW: Emit Accumulated (fires after all batches)
+    {
+      "parameters": {
+        "jsCode": "// Emit all accumulated ready assets as outgoing items and clear the bucket.\nconst store = this.getWorkflowStaticData('global');\nconst out = (store.readyAssets || []).map(j => ({ json: j }));\nstore.readyAssets = [];\nreturn out;"
+      },
+      "id": "5b2b9b77-4c8c-4b0a-9c2a-6e7e3a7f0a11",
+      "name": "Emit Accumulated",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [ 1088, -16 ]
+    }
+  ],
+
+  "connections": {
+    /* keep all prior connections except the edits below */
+
+    // EDIT: Merge All (+ Music) now feeds the Split node (not Create Source directly)
+    "Merge All ( + Music)": {
+      "main": [
+        [
+          { "node": "Split In Batches (assets)", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+
+    // NEW: Split main output (current batch) goes to Upstream fix
+    "Split In Batches (assets)": {
+      "main": [
+        [
+          { "node": "Upstream fix", "type": "main", "index": 0 }
+        ],
+        [
+          // DONE output: when all batches processed, go emit the array for timeline
+          { "node": "Emit Accumulated", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+
+    // EDIT: Upstream fix should feed Create Source (inside the batch)
+    "Upstream fix": {
+      "main": [
+        [
+          { "node": "Ingest: Create Source", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+
+    // (unchanged) Create Source → Set Source Id → Get Source → Normalize Ingest → Was API Error
+    "Ingest: Create Source": { "main": [[ { "node": "Set Source Id (keep meta)", "type": "main", "index": 0 } ]] },
+    "Set Source Id (keep meta)": { "main": [[ { "node": "Ingest: Get Source", "type": "main", "index": 0 } ]] },
+    "Ingest: Get Source": { "main": [[ { "node": "Normalize Ingest", "type": "main", "index": 0 } ]] },
+    "Normalize Ingest": { "main": [[ { "node": "Was API Error", "type": "main", "index": 0 } ]] },
+
+    // Was API Error: false path continues to IF Ready?
+    "Was API Error": {
+      "main": [
+        [
+          { "node": "Stop and Error", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "IF: Ready?", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+
+    // IF Ready? true → Set Served URL → Merge (meta + served) → Use Served URL → Accumulate Ready → (loop) Split In Batches
+    "IF: Ready?": {
+      "main": [
+        [
+          { "node": "Set Served URL", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "In Progress?", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Set Served URL": {
+      "main": [
+        [
+          { "node": "Merge (meta + served)", "type": "main", "index": 1 }
+        ]
+      ]
+    },
+    "Merge (meta + served)": {
+      "main": [
+        [
+          { "node": "Use Served URL", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Use Served URL": {
+      "main": [
+        [
+          { "node": "Accumulate Ready", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+
+    // NEW: Accumulate Ready loops back to Split (continue next batch)
+    "Accumulate Ready": {
+      "main": [
+        [
+          { "node": "Split In Batches (assets)", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+
+    // IF Ready? false path (In Progress?) true → Wait 7s → Prepare GET Input → Get Source (loop)
+    "In Progress?": {
+      "main": [
+        [
+          { "node": "Wait 7s", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "Stop and Error", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Wait 7s": {
+      "main": [
+        [
+          { "node": "Prepare GET Input", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Prepare GET Input": {
+      "main": [
+        [
+          { "node": "Ingest: Get Source", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+
+    // NEW: After all batches finish, emit the combined array to Build Timeline
+    "Emit Accumulated": {
+      "main": [
+        [
+          { "node": "Build Shotstack Timeline", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+
+    /* keep the rest of your original connections (Drive list/normalize, render, etc.) */
+    "Normalize Videos": { "main": [[ { "node": "Merge Video + VO", "type": "main", "index": 0 } ]] },
+    "Normalize VO": { "main": [[ { "node": "Merge Video + VO", "type": "main", "index": 1 } ]] },
+    "Merge Video + VO": { "main": [[ { "node": "Merge All ( + SFX )", "type": "main", "index": 0 } ]] },
+    "Normalize SFX": { "main": [[ { "node": "Merge All ( + SFX )", "type": "main", "index": 1 } ]] },
+    "Merge All ( + SFX )": { "main": [[ { "node": "Merge All ( + Music)", "type": "main", "index": 0 } ]] },
+    "List Footage Drive": { "main": [[ { "node": "Normalize Videos", "type": "main", "index": 0 } ]] },
+    "List Voiceover Drive": { "main": [[ { "node": "Normalize VO", "type": "main", "index": 0 } ]] },
+    "List Sound Effects Drive": { "main": [[ { "node": "Normalize SFX", "type": "main", "index": 0 } ]] },
+    "List Soundtrack": { "main": [[ { "node": "Normalize Soundtrack", "type": "main", "index": 0 } ]] },
+    "Normalize Soundtrack": { "main": [[ { "node": "Merge All ( + Music)", "type": "main", "index": 1 } ]] },
+
+    // (disabled render/download block kept as-is)
+    "HTTP Shotstack": { "main": [[ { "node": "Wait 60s", "type": "main", "index": 0 } ]] },
+    "Wait 60s": { "main": [[ { "node": "Check Render Status", "type": "main", "index": 0 } ]] },
+    "Check Render Status": { "main": [[ { "node": "Completed?4", "type": "main", "index": 0 } ]] },
+    "Completed?4": {
+      "main": [
+        [ { "node": "Edit Fields2", "type": "main", "index": 0 } ],
+        [ { "node": "Wait 60s", "type": "main", "index": 0 } ]
+      ]
+    },
+    "Edit Fields2": { "main": [[ { "node": "Download the file", "type": "main", "index": 0 } ]] },
+    "Download the file": { "main": [[ { "node": "Upload Shotstack", "type": "main", "index": 0 } ]] },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          { "node": "List Footage Drive", "type": "main", "index": 0 },
+          { "node": "List Voiceover Drive", "type": "main", "index": 0 },
+          { "node": "List Sound Effects Drive", "type": "main", "index": 0 },
+          { "node": "List Soundtrack", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "versionId": "423f6659-b486-420f-a79a-7a5568e943d6",
+  "meta": {
+    "instanceId": "d9ecf96d4849a9f2df9259c4fe9802ccdefd36f7c01bc7c2797024859526a70c"
+  },
+  "id": "70K5cqhPgxUuRVbf",
+  "tags": []
+}

@@ -1,0 +1,3010 @@
+{
+  "name": "MEDIA_STORYBOARD_TATE",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/fal-ai/flux-2-pro/requests/{{ $json.request_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "03e7c7d4-f31b-4597-8e43-928ec6ba0e6a",
+      "name": "Get Image Result URL1",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -384,
+        -96
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "NEUa1Bd2iq3TQkWN",
+          "name": "Header_FAL_Tate"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/fal-ai/flux-2-pro/requests/{{ $json.request_id }}/status ",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "177e0774-b79c-4c8f-8f81-f6f0671ff360",
+      "name": "Check Status1",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -800,
+        -80
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "NEUa1Bd2iq3TQkWN",
+          "name": "Header_FAL_Tate"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "299a7c34-dcff-4991-a73f-5b1a84f188ea",
+              "operator": {
+                "name": "filter.operator.equals",
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "COMPLETED"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ee552506-a277-479c-949b-50e372d90ad3",
+      "name": "Completed?1",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        -640,
+        -80
+      ],
+      "typeVersion": 2.2,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f0a033cf-fa2b-4930-93b9-ff9c45fa7c14",
+              "name": "prompt",
+              "type": "string",
+              "value": "={{ $json.scene_prompt }}"
+            },
+            {
+              "id": "7b30e020-5ea6-44f8-9862-a96b954f2647",
+              "name": "safety_tolerance",
+              "value": 5,
+              "type": "number"
+            },
+            {
+              "id": "8e89fca7-d380-4876-b973-69caa0394bc5",
+              "name": "enable_safety_checker",
+              "type": "boolean",
+              "value": false
+            },
+            {
+              "id": "2b56185d-5c61-4c17-85f1-53ac4aab2b18",
+              "name": "output_format",
+              "type": "string",
+              "value": "png"
+            },
+            {
+              "id": "a8b9ca26-3849-4609-b1ca-6b88e401cda4",
+              "name": "width",
+              "value": 1920,
+              "type": "number"
+            },
+            {
+              "id": "cc79df94-7df5-4e6a-8a72-ecbe25ae3ff1",
+              "name": "height",
+              "value": 1080,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "dd957cb4-853b-4f94-a699-7440a3d33bf3",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -1376,
+        -80
+      ],
+      "typeVersion": 3.4,
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "id": "e65edb05-100a-45b5-8176-2a6e74c11d6d",
+      "name": "Continue After Approval1",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -2208,
+        128
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Each item: { json: { voiceover, shot_number, scene, movement, sound_design, approval } }\nreturn items.map(item => {\n  return {\n    json: {\n      shot_number: item.json.shot_number ?? '',\n      // For your APIs:\n      scene_prompt: item.json.scene ?? '',\n      movement_prompt: item.json.movement ?? '',\n      voiceover_prompt: item.json.voiceover ?? '',\n      sound_design_prompt: item.json.sound_design ?? ''\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2000,
+        128
+      ],
+      "id": "7905fa96-0509-425e-80b3-7bb2ebf03953",
+      "name": "Code6",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8ae280e8-1631-45c7-81cf-a4de2b0f18d5",
+              "name": "scene_prompt",
+              "value": "={{ $json.scene_prompt }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1728,
+        -80
+      ],
+      "id": "cff267b4-8e65-44ae-96d0-332c9496000c",
+      "name": "Image Prompts",
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "id": "4f6697d3-077f-4d79-8786-2bccd53525ff",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2704,
+        -1376
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -384,
+        112
+      ],
+      "id": "f9729776-af62-4d91-b43e-eafd792a0973",
+      "name": "Merge",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1GYyDJa5xbSK1UPfE_lZv5JUqW9TU41RrZrV8q8oie68",
+          "mode": "list",
+          "cachedResultName": "Media Agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GYyDJa5xbSK1UPfE_lZv5JUqW9TU41RrZrV8q8oie68/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Prompt Approval",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GYyDJa5xbSK1UPfE_lZv5JUqW9TU41RrZrV8q8oie68/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2656,
+        128
+      ],
+      "id": "4b0fdab2-aa28-4f8e-aed2-892debbc2891",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9OxeqHywsJ4XoYsm",
+          "name": "Google Sheets_Tate"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## OUTPUT\n\nThe voiceover, scenes, movements, and sound design will be available in the \"Prompt Approval\" tab of the linked Google Sheet. Shots must be marked as \"Approved\" in order to proceed to image generation. ",
+        "height": 624,
+        "width": 256,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2240,
+        -912
+      ],
+      "id": "d3b7efb8-1b33-4477-91a0-b96014485cb3",
+      "name": "Sticky Note1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## OUTPUT\n\nImages are uploaded to the connected Google Drive folder. An image storyboard will be available in the \"Image Approval\" tab of the linked Google Sheet.  The scene, movement, and sound design are provided as reference. Images must be marked as \"Approved\" in order to proceed to animation. ",
+        "height": 624,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        768,
+        -224
+      ],
+      "id": "70173ccb-cc1d-4a3b-9630-d733273021f8",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## INPUT\n\n**DEPENDENCY** \n\nComplete step 01 and mark  scenes as approved before Activating step 02. Remember to deactivate all other steps.",
+        "height": 624,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3296,
+        -224
+      ],
+      "id": "e68dd95e-b67b-49f1-ab3e-bfe0a93243fe",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## BEGIN\n\n**IMPORTANT**\n\nClear all contents from the Google Sheet before beginning to avoid appending content to unexpected rows. \n\nEnter your premise in the Premise tab of the Google Sheet. A premise must contain the following: \n\nDuration (Seconds)\nPremise \nSetting\nCharacters (Optional)\n\nRemember to deactivate all other steps.",
+        "height": 624,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3296,
+        -912
+      ],
+      "id": "4bb6352f-60b1-43d4-9726-f9ef55aa4560",
+      "name": "Sticky Note5",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1GYyDJa5xbSK1UPfE_lZv5JUqW9TU41RrZrV8q8oie68/edit?usp=sharing",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 678854419,
+          "mode": "list",
+          "cachedResultName": "Image Approval",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GYyDJa5xbSK1UPfE_lZv5JUqW9TU41RrZrV8q8oie68/edit#gid=678854419"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Shot Number": "={{ $json.shot_number }}",
+            "Image": "={{ '=IMAGE(\"' + ($json.response?.images?.[0]?.url || $json.images?.[0]?.url || $json.data?.images?.[0]?.url || $json.image_url || $json.image) + '\",4,384,688)'}}\n\n",
+            "Scene": "={{ $json.scene_prompt }}",
+            "Movement": "={{ $json.movement_prompt }}",
+            "Sound Design": "={{ $json.sound_design_prompt }}",
+            "Approval": "Pending"
+          },
+          "matchingColumns": [
+            "Shot Number"
+          ],
+          "schema": [
+            {
+              "id": "Shot Number",
+              "displayName": "Shot Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Image",
+              "displayName": "Image",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Scene",
+              "displayName": "Scene",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Movement",
+              "displayName": "Movement",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sound Design",
+              "displayName": "Sound Design",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Approval",
+              "displayName": "Approval",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "USER_ENTERED"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        464,
+        112
+      ],
+      "id": "b413885f-6292-40dd-8481-3e40773429eb",
+      "name": "Image Approval",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9OxeqHywsJ4XoYsm",
+          "name": "Google Sheets_Tate"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const result = [];\n\nfor (const item of items) {\n  const approval = (item.json.Approval || '').toLowerCase().trim();\n  if (approval === 'approved') {\n    result.push({\n      json: {\n        voiceover: item.json['Voiceover'] ?? '',\n        shot_number: item.json['Shot Number'] ?? '',\n        scene: item.json['Scene'] ?? '',\n        movement: item.json['Movement'] ?? '',\n        sound_design: item.json['Sound Design'] ?? ''\n      }\n    });\n  }\n}\n\nreturn result;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2432,
+        128
+      ],
+      "id": "9ec87182-d269-4f57-8bea-c2d798bef316",
+      "name": "Get Prompt Approval",
+      "alwaysOutputData": true,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const result = [];\n\nfor (const item of items) {\n  const approval = (item.json.Approval || '').toLowerCase().trim();\n  if (approval === 'approved') {\n    result.push({\n      json: {\n        shot_number: item.json['Shot Number'] ?? '',\n        image: item.json['Image'] ?? '',\n        movement: item.json['Movement'] ?? '',\n        sound_design: item.json['Sound Design'] ?? ''\n      }\n    });\n  }\n}\n\nreturn result;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2464,
+        800
+      ],
+      "id": "c7c4e97e-7f06-4dfc-8d0b-378e99ffa1b4",
+      "name": "Get Image Approval",
+      "alwaysOutputData": true,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/fal-ai/kling-video/requests/{{ $json.request_id }}/status",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "a34d2c6c-2845-4163-8c40-c412e84186f8",
+      "name": "Check Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -1120,
+        608
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "NEUa1Bd2iq3TQkWN",
+          "name": "Header_FAL_Tate"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "299a7c34-dcff-4991-a73f-5b1a84f188ea",
+              "operator": {
+                "name": "filter.operator.equals",
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "COMPLETED"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "903ec495-5bef-4ae9-b6f0-1298d6b6bf9b",
+      "name": "Completed?",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        -896,
+        608
+      ],
+      "typeVersion": 2.2,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/fal-ai/kling-video/requests/{{ $json.request_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "1dfe924d-3455-4d47-ada7-1ced5c58358b",
+      "name": "Get Video Result URL",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -672,
+        592
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "NEUa1Bd2iq3TQkWN",
+          "name": "Header_FAL_Tate"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.video.url }}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "video"
+            }
+          }
+        }
+      },
+      "id": "6ea07f12-bce8-4f76-ad73-d3cbf01e8a64",
+      "name": "Download Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -448,
+        592
+      ],
+      "typeVersion": 4.2,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/fal-ai/elevenlabs/requests/{{ $json.request_id }}/status",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "57de0af6-c4cd-4c77-a907-f6457b0aa963",
+      "name": "Check Status2",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -880,
+        1296
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "XMLgFgRM6qTswXdW",
+          "name": "Header Auth account_Conway"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "299a7c34-dcff-4991-a73f-5b1a84f188ea",
+              "operator": {
+                "name": "filter.operator.equals",
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "COMPLETED"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b64d0f84-ce02-4d1a-a13e-53570faff626",
+      "name": "Completed?2",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        -656,
+        1360
+      ],
+      "typeVersion": 2.2,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/fal-ai/elevenlabs/requests/{{ $json.request_id }}/status",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "a8dbccfc-19b3-41f5-b649-dd8fa5d9b143",
+      "name": "Check Status3",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -1152,
+        1952
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "NEUa1Bd2iq3TQkWN",
+          "name": "Header_FAL_Tate"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "299a7c34-dcff-4991-a73f-5b1a84f188ea",
+              "operator": {
+                "name": "filter.operator.equals",
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "COMPLETED"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8c03a624-f260-4731-8ce8-5b1589cd4ec3",
+      "name": "Completed?3",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        -928,
+        1952
+      ],
+      "typeVersion": 2.2,
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "id": "a74bd35b-31f5-40f8-8999-cea021b92608",
+      "name": "Wait 5 Sec1",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        -1376,
+        1952
+      ],
+      "webhookId": "61a8626c-e281-4d4b-abb0-b9d87d1b4e7c",
+      "typeVersion": 1.1,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "id": "0492ad88-2dc5-43b5-98e9-5e5fa214d88b",
+      "name": "Wait 1 Sec",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        -1104,
+        1360
+      ],
+      "webhookId": "61a8626c-e281-4d4b-abb0-b9d87d1b4e7c",
+      "typeVersion": 1.1,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/fal-ai/elevenlabs/requests/{{ $json.request_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "1b3fadc4-9e7f-4ba5-a8fb-e65567cf7ed1",
+      "name": "Get Voiceover Result URL",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -432,
+        1360
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "NEUa1Bd2iq3TQkWN",
+          "name": "Header_FAL_Tate"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/fal-ai/elevenlabs/requests/{{ $json.request_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "fe896b2c-2367-4386-96ec-afc37dce07f4",
+      "name": "Get SFX Result URL2",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -704,
+        1936
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "NEUa1Bd2iq3TQkWN",
+          "name": "Header_FAL_Tate"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.audio.url }}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "80fc091f-c1f4-43d2-a3ee-e1a9aa97e9bb",
+      "name": "Download Voiceover",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -208,
+        1360
+      ],
+      "typeVersion": 4.2,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.audio.url }}",
+        "options": {}
+      },
+      "id": "46eabc5e-8a80-41a8-9886-7135468931ee",
+      "name": "Download SFX",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -480,
+        1936
+      ],
+      "typeVersion": 4.2,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/elevenlabs/sound-effects",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"{{ $json.sound_design }}\",\n  \"prompt_influence\": 0.4,\n  \"duration_seconds\": 5\n}",
+        "options": {}
+      },
+      "id": "0442c0df-9560-41a1-8d7b-f0f39b78f790",
+      "name": "Fal Eleven Labs SFX",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -1600,
+        1952
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "NEUa1Bd2iq3TQkWN",
+          "name": "Header_FAL_Tate"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "21fc7536-1b96-467a-a863-fd8c1353a7d9",
+              "name": "voiceover",
+              "value": "={{ $json.voiceover_prompt }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1776,
+        1360
+      ],
+      "id": "b228b7ed-2f12-42ca-906a-e3c5db516d1a",
+      "name": "Voiceover Prompt",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nreturn items.filter(item => (item.json.voiceover ?? '').trim() !== '');"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1552,
+        1360
+      ],
+      "id": "c835e997-b5bd-48ac-ac37-07f7a728db81",
+      "name": "Code",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "21fc7536-1b96-467a-a863-fd8c1353a7d9",
+              "name": "sound_design",
+              "value": "={{ $json.sound_design_prompt }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1824,
+        1952
+      ],
+      "id": "118f2f04-6185-4d2b-8407-a69da0657cb6",
+      "name": "Sound Design Prompt",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/elevenlabs/tts/turbo-v2.5",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"{{ $json.voiceover }}\",\n  \"voice\": \"Will\",\n  \"stability\": 0.5,\n  \"similarity_boost\": 0.75\n}",
+        "options": {}
+      },
+      "id": "63041747-5227-4cbe-ad5a-a3f9cef6a4de",
+      "name": "Fal ElevenLabs",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -1328,
+        1360
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "NEUa1Bd2iq3TQkWN",
+          "name": "Header_FAL_Tate"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "video",
+        "name": "={{ $binary.video.fileName }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1v0AZE_mQQA-O_HOSut3EUNg_Q87czdOC",
+          "mode": "list",
+          "cachedResultName": "Footage",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1v0AZE_mQQA-O_HOSut3EUNg_Q87czdOC"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        288,
+        784
+      ],
+      "id": "9502957e-a91a-493e-b6ee-38233fb63aad",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Ewv49eVtefBoFHBt",
+          "name": "Google Drive account_TATE"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## INPUT\n\n**DEPENDENCY** \n\nComplete steps 01 and 02. Mark images as approved in the \"Image Approval\" tab of the linked Google Sheet before Activating step 03. Remember to deactivate all other steps",
+        "height": 624,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3296,
+        448
+      ],
+      "id": "050b2816-b7cc-4ead-8fa2-c78d0d391875",
+      "name": "Sticky Note6",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -80,
+        784
+      ],
+      "id": "6b77f424-217c-46d0-9c5c-d131889b4cf6",
+      "name": "Merge2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## 04\n**VIDEO PRODUCTION** ",
+        "height": 624,
+        "width": 3792,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3040,
+        448
+      ],
+      "id": "86b8d31a-d335-4d76-9c16-ca2a7e6e1e5f",
+      "name": "Sticky Note7",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1GYyDJa5xbSK1UPfE_lZv5JUqW9TU41RrZrV8q8oie68",
+          "mode": "list",
+          "cachedResultName": "Media Agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GYyDJa5xbSK1UPfE_lZv5JUqW9TU41RrZrV8q8oie68/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1829372456,
+          "mode": "list",
+          "cachedResultName": "Premise",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GYyDJa5xbSK1UPfE_lZv5JUqW9TU41RrZrV8q8oie68/edit#gid=1829372456"
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "specifyRange"
+            }
+          },
+          "outputFormatting": {
+            "values": {
+              "general": "UNFORMATTED_VALUE",
+              "date": "FORMATTED_STRING"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1664,
+        -1376
+      ],
+      "id": "f5ccbe39-aa99-4660-ba64-1a3ac9a50fef",
+      "name": "Get Prompt",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9OxeqHywsJ4XoYsm",
+          "name": "Google Sheets_Tate"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## OUTPUT\n\nFootage will be available in the connected Google Drive folder or directly from Fal.ai",
+        "height": 624,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        768,
+        448
+      ],
+      "id": "703138a3-da93-438e-aacf-30a8fdffb49d",
+      "name": "Sticky Note8",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## 03\n**STORYBOARD** ",
+        "height": 624,
+        "width": 3792,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3040,
+        -224
+      ],
+      "id": "32dc6b8a-8bf6-496f-944d-c67620ada224",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {},
+      "id": "ed9140fa-7a77-4a57-85c7-8a97686350f9",
+      "name": "Continue After Approval",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -2240,
+        1360
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Each item: { json: { voiceover, shot_number, scene, movement, sound_design, approval } }\nreturn items.map(item => {\n  return {\n    json: {\n      shot_number: item.json.shot_number ?? '',\n      // For your APIs:\n      scene_prompt: item.json.scene ?? '',\n      movement_prompt: item.json.movement ?? '',\n      voiceover_prompt: item.json.voiceover ?? '',\n      sound_design_prompt: item.json.sound_design ?? ''\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2032,
+        1360
+      ],
+      "id": "a97cc257-f040-434e-8ef9-6d8de5a46538",
+      "name": "Code7",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const result = [];\n\nfor (const item of items) {\n  const approval = (item.json.Approval || '').toLowerCase().trim();\n  if (approval === 'approved') {\n    result.push({\n      json: {\n        voiceover: item.json['Voiceover'] ?? '',\n        shot_number: item.json['Shot Number'] ?? '',\n        scene: item.json['Scene'] ?? '',\n        movement: item.json['Movement'] ?? '',\n        sound_design: item.json['Sound Design'] ?? ''\n      }\n    });\n  }\n}\n\nreturn result;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2464,
+        1360
+      ],
+      "id": "c73cf2a1-4ce3-4f21-9e0f-94e7d66035e5",
+      "name": "Get Prompt Approval1",
+      "alwaysOutputData": true,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "audio",
+        "name": "={{ $binary.audio.fileName }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1DeGVrRtGUIFqOSZq5zfSl7CyL7zJa_et",
+          "mode": "list",
+          "cachedResultName": "Voiceover",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1DeGVrRtGUIFqOSZq5zfSl7CyL7zJa_et"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        304,
+        1360
+      ],
+      "id": "75975631-a81a-4dbb-84d7-f2fbf0ff82cd",
+      "name": "Upload file1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Ewv49eVtefBoFHBt",
+          "name": "Google Drive account_TATE"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize $binary.audio for Google Drive Upload and set filename \"vo-track-vN\".\n// Requires a prior HTTP Request node that downloaded the file into $binary.audio.\nreturn items\n  .map((item, idx) => {\n    const json = item.json || {};\n    const bin  = item.binary || {};\n    const b    = bin.audio || bin.data || bin.file || null;\n\n    // Drop items without a file (prevents Drive errors)\n    if (!b || !b.data) return null;\n\n    // Normalize to \"audio\"\n    bin.audio = b;\n\n    // Pick an extension from existing name, MIME, or URL\n    const fromName = (bin.audio.fileName || json.audio?.file_name || \"\")\n      .match(/\\.(mp3|wav|m4a|ogg|webm|flac|aac)(?=($|\\?|#))/i)?.[0]?.toLowerCase();\n    const mime = json.audio?.content_type || bin.audio.mimeType || \"\";\n    const fromUrl = String(json.audio?.url || \"\")\n      .match(/\\.(mp3|wav|m4a|ogg|webm|flac|aac)(?=($|\\?|#))/i)?.[0]?.toLowerCase();\n\n    const ext =\n      fromName ||\n      (/audio\\/mpeg/i.test(mime) ? \".mp3\" :\n       /audio\\/(x-)?wav/i.test(mime) ? \".wav\" :\n       /audio\\/(mp4|m4a)/i.test(mime) ? \".m4a\" :\n       /audio\\/ogg/i.test(mime) ? \".ogg\" :\n       /audio\\/webm/i.test(mime) ? \".webm\" :\n       /audio\\/flac/i.test(mime) ? \".flac\" :\n       /audio\\/aac/i.test(mime) ? \".aac\" : null) ||\n      fromUrl || \".mp3\";\n\n    // Add suffix v1, v2, ... based on item index\n    const version = idx + 1;\n    bin.audio.fileName = `vo-track-v${version}${ext}`;\n    bin.audio.mimeType = mime || bin.audio.mimeType || \"audio/mpeg\";\n\n    return { json, binary: bin };\n  })\n  .filter(Boolean);\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        32,
+        1360
+      ],
+      "id": "4af0ac29-6c52-4d25-a727-99a8ea5cf1b3",
+      "name": "Code2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1GYyDJa5xbSK1UPfE_lZv5JUqW9TU41RrZrV8q8oie68",
+          "mode": "list",
+          "cachedResultName": "Media Agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GYyDJa5xbSK1UPfE_lZv5JUqW9TU41RrZrV8q8oie68/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Prompt Approval",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GYyDJa5xbSK1UPfE_lZv5JUqW9TU41RrZrV8q8oie68/edit#gid=0"
+        },
+        "options": {
+          "outputFormatting": {
+            "values": {
+              "general": "UNFORMATTED_VALUE",
+              "date": "FORMATTED_STRING"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2720,
+        1360
+      ],
+      "id": "4b20f1b9-6e6a-4d89-9c0f-23cd5efc756c",
+      "name": "Get Voiceover Prompt",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9OxeqHywsJ4XoYsm",
+          "name": "Google Sheets_Tate"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## 05\n**VOICEOVER** ",
+        "height": 624,
+        "width": 3792,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3040,
+        1120
+      ],
+      "id": "e38df8c6-78f3-4492-bb88-9d4158c1537d",
+      "name": "Sticky Note9",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## INPUT\n\n**DEPENDENCY** \n\nComplete steps 01 and 02. The row with the voiceover in Google Sheets must be approved in order for the Voiceover section to run.",
+        "height": 624,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3296,
+        1120
+      ],
+      "id": "a6712c16-33fd-4b7e-aa56-a977c765adde",
+      "name": "Sticky Note10",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## OUTPUT\n\nVoiceover file will be available in the connected Google Drive folder or directly from Fal.ai",
+        "height": 624,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        768,
+        1120
+      ],
+      "id": "2ea954b2-8aa2-44eb-94fa-b767d6019283",
+      "name": "Sticky Note11",
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "id": "380322dc-d33d-49d5-9577-e7f9df1f6c39",
+      "name": "Continue After Approval2",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -2272,
+        1952
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Each item: { json: { voiceover, shot_number, scene, movement, sound_design, approval } }\nreturn items.map(item => {\n  return {\n    json: {\n      shot_number: item.json.shot_number ?? '',\n      // For your APIs:\n      scene_prompt: item.json.scene ?? '',\n      movement_prompt: item.json.movement ?? '',\n      voiceover_prompt: item.json.voiceover ?? '',\n      sound_design_prompt: item.json.sound_design ?? ''\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2064,
+        1952
+      ],
+      "id": "754bff82-8d09-4c20-956d-6eb2dbfd0705",
+      "name": "Code8",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const result = [];\n\nfor (const item of items) {\n  const approval = (item.json.Approval || '').toLowerCase().trim();\n  if (approval === 'approved') {\n    result.push({\n      json: {\n        voiceover: item.json['Voiceover'] ?? '',\n        shot_number: item.json['Shot Number'] ?? '',\n        scene: item.json['Scene'] ?? '',\n        movement: item.json['Movement'] ?? '',\n        sound_design: item.json['Sound Design'] ?? ''\n      }\n    });\n  }\n}\n\nreturn result;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2752,
+        2160
+      ],
+      "id": "2f16f7cd-ca98-432d-affc-edb62af72eb8",
+      "name": "Get Prompt Approval2",
+      "alwaysOutputData": true,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -144,
+        2144
+      ],
+      "id": "a919114e-7c0d-4310-bc67-5a9150503453",
+      "name": "Merge3",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "audio",
+        "name": "={{ $binary.audio.fileName }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1QOcb0Ti9ADBkqicR3DB9u_2lRkSSaDLM",
+          "mode": "list",
+          "cachedResultName": "Sound Effects",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1QOcb0Ti9ADBkqicR3DB9u_2lRkSSaDLM"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        448,
+        2144
+      ],
+      "id": "224e8baf-a585-4f15-9f49-1d3ccd6a0805",
+      "name": "Upload file2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Ewv49eVtefBoFHBt",
+          "name": "Google Drive account_TATE"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1GYyDJa5xbSK1UPfE_lZv5JUqW9TU41RrZrV8q8oie68",
+          "mode": "list",
+          "cachedResultName": "Media Agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GYyDJa5xbSK1UPfE_lZv5JUqW9TU41RrZrV8q8oie68/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Prompt Approval",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GYyDJa5xbSK1UPfE_lZv5JUqW9TU41RrZrV8q8oie68/edit#gid=0"
+        },
+        "options": {
+          "outputFormatting": {
+            "values": {
+              "general": "UNFORMATTED_VALUE",
+              "date": "FORMATTED_STRING"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2752,
+        1952
+      ],
+      "id": "7b5175ac-9c34-4e1b-848c-f8368d3868da",
+      "name": "Get SFX Prompts",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9OxeqHywsJ4XoYsm",
+          "name": "Google Sheets_Tate"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize $binary.audio and name it from Shot Number (merged from Approval).\n// Place this AFTER: Merge (Combine; HTTP download on Input 1) → HTTP Request (download to $binary.audio)\nreturn items\n  .map((item, idx) => {\n    const j = item.json || {};\n    const bin = item.binary || {};\n    const b = bin.audio || bin.data || bin.file || null;\n\n    // Drop items without a downloaded file\n    if (!b || !b.data) return null;\n\n    // Keep binary under \"audio\"\n    bin.audio = b;\n\n    // Shot number from approval branch (fallbacks included)\n    const rawShot = j[\"Shot Number\"] ?? j.shot_number ?? j.row_number ?? (idx + 1);\n    const shotStr = String(rawShot).match(/\\d+/)?.[0]?.padStart(2, \"0\") || String(idx + 1).padStart(2, \"0\");\n\n    // Decide extension from existing name, MIME, or URL\n    const fromName = (bin.audio.fileName || j.audio?.file_name || \"\")\n      .match(/\\.(wav|mp3|m4a|ogg|webm|flac|aac)(?=($|\\?|#))/i)?.[0]?.toLowerCase();\n    const mime = j.audio?.content_type || bin.audio.mimeType || \"\";\n    const fromUrl = String(j.audio?.url || \"\")\n      .match(/\\.(wav|mp3|m4a|ogg|webm|flac|aac)(?=($|\\?|#))/i)?.[0]?.toLowerCase();\n\n    const ext =\n      fromName ||\n      (/audio\\/(x-)?wav/i.test(mime) ? \".wav\" :\n       /audio\\/mpeg/i.test(mime)     ? \".mp3\" :\n       /audio\\/(mp4|m4a)/i.test(mime)? \".m4a\" :\n       /audio\\/ogg/i.test(mime)      ? \".ogg\" :\n       /audio\\/webm/i.test(mime)     ? \".webm\" :\n       /audio\\/flac/i.test(mime)     ? \".flac\" :\n       /audio\\/aac/i.test(mime)      ? \".aac\"  : null) ||\n      fromUrl || \".mp3\";\n\n    // Finalize name + mime\n    bin.audio.fileName = `sd-shot-${shotStr}${ext}`;\n    if (!bin.audio.mimeType) bin.audio.mimeType = mime || \"audio/mpeg\";\n\n    return { json: j, binary: bin };\n  })\n  .filter(Boolean);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        160,
+        2144
+      ],
+      "id": "489b0b43-7d8b-4460-bed7-485033e8fb38",
+      "name": "Code9",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## INPUT\n\n**DEPENDENCY** \n\nComplete steps 01 and 02. The rows with sound effects in Google Sheets must be approved in order for the Sound Effects section to run.",
+        "height": 624,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3296,
+        1808
+      ],
+      "id": "3c4a33ab-4ef5-4e75-92f7-c6203f07d3ef",
+      "name": "Sticky Note13",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## OUTPUT\n\nSound Effects files will be available in the connected Google Drive folder or directly from Fal.ai",
+        "height": 624,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        768,
+        1808
+      ],
+      "id": "08796e5c-2b4a-45ce-92cd-ccda66a680c5",
+      "name": "Sticky Note14",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## INTRODUCTION\n\n**IMPORTANT**\n\nThe following accounts must be authenticated in order to run this workflow. \n\nOpen AI \nGoogle Sheets\nFal.ai\nGoogle Drive\n\nThe structure and naming convention of the Google Sheets tabs, columns, and cells must match the workflow exactly. The Google Drive folders must also follow the naming convention of the workflow.\n\nMedia Agent Output\n├── Footage\n├── Images\n├── Sound Effects\n├── Voiceover\n",
+        "height": 512,
+        "width": 464,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3296,
+        -1488
+      ],
+      "id": "6de61750-74e7-4caa-9dfe-04c292e50504",
+      "name": "Sticky Note15",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "image",
+        "name": "={{ $binary.image.fileName }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1iVHTel-Rb7oMYFeDLajWNtoOuYlrgDJv",
+          "mode": "list",
+          "cachedResultName": "Images",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1iVHTel-Rb7oMYFeDLajWNtoOuYlrgDJv"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        464,
+        -80
+      ],
+      "id": "13dca42c-e232-4552-8968-2971596b9669",
+      "name": "Upload file3",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Ewv49eVtefBoFHBt",
+          "name": "Google Drive account_TATE"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.images[0].url }}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "85f8d597-f1e1-4a85-b647-7c6d759dfb52",
+      "name": "Download Image1",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -32,
+        -80
+      ],
+      "typeVersion": 4.2,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## 01\n**SCRIPT** ",
+        "height": 624,
+        "width": 790,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3040,
+        -912
+      ],
+      "id": "538e87e3-61cf-4681-b5c5-757bbc729c9f",
+      "name": "Sticky Note",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1GYyDJa5xbSK1UPfE_lZv5JUqW9TU41RrZrV8q8oie68/edit?usp=sharing",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Prompt Approval",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GYyDJa5xbSK1UPfE_lZv5JUqW9TU41RrZrV8q8oie68/edit#gid=0"
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "Voiceover",
+              "fieldValue": "={{ $json.row[0] }}"
+            },
+            {
+              "fieldId": "Shot Number",
+              "fieldValue": "={{ $json.row[1] }}"
+            },
+            {
+              "fieldId": "Scene",
+              "fieldValue": "={{ $json.row[2] }}"
+            },
+            {
+              "fieldId": "Movement",
+              "fieldValue": "={{ $json.row[3] }}"
+            },
+            {
+              "fieldId": "Sound Design",
+              "fieldValue": "={{ $json.row[4] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6c3927ca-e131-4720-8112-1da1f0f90624",
+      "name": "Prompt Approval",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 3,
+      "position": [
+        -2448,
+        -496
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9OxeqHywsJ4XoYsm",
+          "name": "Google Sheets_Tate"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.user_message }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a live-action filmmaker—a cinematic storyteller. You design short films and cinematic sequences that inspire. Your storytelling is built for live-action filmmaking, with a deep understanding of natural light, lens choices, camera choreography, and narrative pacing.\nYou create short films, trailers, or standalone sequences. Your work should feel modern and professional. Scenes may be dialogue-free, led entirely by imagery, voiceover, and sound. Your task is to craft visually stunning scenes told through carefully orchestrated shots. Each moment you create should be cinematic, clear, and moving.\nScene Cohesion + Subtle Evolution\nKeep the style constant, but let light, tone, and color evolve naturally with the emotional progression of the story—like a symphony modulating keys rather than jumping genres. You are not here to summarize or explain—you are here to evoke. Design for a filmmaker’s eye, a poet’s heart, and an editor’s sense of rhythm.\nYour output should always:\nBegin with a narrative voiceover. Write a meaningful narration that will inspire the visuals. The language should be purposeful, and tonally aligned with the story's emotional arc. Use natural, conversational language. Avoid flowery metaphors or abstract phrasing. Not Sentimental. Keep it grounded and understated. Let the emotion emerge from tone, not exaggeration. Use simple, direct sentences. Aim for clarity and resonance over complexity. Don’t describe what’s on screen. Voiceover should add subtext, insight, or contrast. A 30 second film requires at least a 60 word voiceover. A 60 second film requires at least a 120 word voiceover. A 3 minute film requires at least a 360 word voiceover.  A 5 minute film requires at least a 600 word voiceover. Always write slightly more voiceover than necessary. \nFor each film or sequence you design, break it down into a series of numbered shots, each consisting of the following four labeled sections:\n1. Shot Number\nA sequential number indicating the order of the shot.\n2. Scene\nA vivid, generative description of the visual frame—subject, setting, composition, light, color grading, texture, atmosphere. Specify live-action camera details including lens type, aperture, framing (e.g., close-up, wide shot, over-the-shoulder), and any stylistic camera settings (e.g., shallow depth of field, handheld shake, golden hour backlight).\n3. Movement\nSpecify the camera’s movement: Pan, Tilt, Dolly, Truck, Crane, Zoom, Handheld, or Static. Describe how the movement enhances mood, tension, or emotional dynamics as well as the action in the shot.\n4. Sound Design\nDescribe the ambient soundscape and designed sound elements—natural atmospheres (wind, city hum, breath), diegetic elements (footsteps, door creaks), or cinematic additions (swells of music, stingers, reverbs). This should heighten emotional immersion and deepen the cinematic texture.\nIMPORTANT REQUIREMENTS\nCore Requirements for Style & Consistency\nVoiceover\nKeep the narration plainspoken and grounded. Use clear, conversational language that feels like real thoughts, not poetry or performance. Avoid metaphors, sentimentality, or theatrical phrasing—let the emotion come through naturally. The voiceover should add quiet insight or contrast to the visuals, not describe what’s already seen.\nCharacter Descriptions (1–3 total)\nIntroduce the primary characters using consistent, detailed visual language.\nDo not assign names. Each description must include:\n• Age range, ethnicity, hairstyle, and clothing (contextual and weather-appropriate)\n• Body language, posture, tools or objects they carry\n• Hairstyle, clothing, posture,\n• Emotional state or personality insight\n• How they relate to their environment\n:warning: MANDATORY: These descriptions must be REPEATED IN FULL every time a character appears in a scene. Never reference memory, never use names or pronouns.\nCinematic Resolution Standard\nSpecify the resolution as 4k in every scene description\nColor Grading & Tone Consistency\nApply a consistent, intentional color grading palette throughout each short film. Tone should follow emotional arc and time of day:\nMorning → Warm golden tones, soft low-angle light, long shadows.\nMidday → Clean neutral light, crisp contrast, realistic color fidelity.\nEvening/Dusk → Cool blue twilight, with Interior Glow—windows, lamps, or candles casting soft amber light inside.\nMaintain consistent LUT-style coloration across shots within the same time block.\nGeographic and Environmental Continuity\nAll shots must reflect the same geographic location, climate, and architectural/material context as described in the input. (e.g., rural Midwest farmhouse, coastal Japan, urban Brooklyn apartment).\nVisual elements—flora, building style, weather, horizon line—should remain aesthetic siblings, reinforcing place-based storytelling.\n:warning: MANDATORY: Use a variety of shot framing include textural close-up shots, medium shots, long shots, and drone aerials. \nEvery prompt must fully re-describe each character when they appear. All prompts must be long, cinematic, specific, atmospheric, and completely self-contained.\nShot Duration Calibration\nA standard shot should be assumed to last ~5 seconds, unless otherwise specified.\nUse this to determine the total number of shots required:\n30 sec film → ~6 shots\n60 sec film → ~12 shots\n3 min film → ~36 shots\n5 min film → ~60 shots\nAdjust pacing (e.g. longer static takes vs. rapid montage) based on tone and genre, but always hit the target shot count to match film length.\nInterior Lighting Treatment (Interior Glow)\nFor all interior scenes, maintain a consistent approach to lighting:\nUse natural spill from exterior windows when daytime.\nAt dusk/night, include Interior Glow: practical lights (lamps, warm fixtures), candlelight, or warm bounce—this creates emotional warmth and visual contrast.\nInterior scenes should always balance realism and painterly control of shadows and light pools.\nVisual Rhythm\nThe agent must ensure that visual flow, camera movement, and sound/voiceover create a rhythm that feels cohesive. Every shot should belong to a larger mood arc, not just be aesthetically isolated. Camera movement and lensing should remain consistent in tone: handheld documentary vs. locked-off tripod vs. floaty gimbal, etc.—but should not switch styles abruptly unless narratively justified.\nOutput Requirements Per Shot (non-negotiable structure):\nEach shot must include the following five labeled sections:\nShot Number\nScene (Subject, lens, aperture, framing, settings)\nMovement (Pan, Tilt, Dolly, Truck, Crane, Zoom)\nSound Design\nOutput the voiceover followed by each shot separately. Example shot structure (use this exact format; don’t include this example in your output):\nVoiceover: I hadn’t been back in years. Thought maybe the place would feel smaller, or different. But it doesn’t—it just feels quiet. She used to call us in from the fields when the light hit a certain way. That same light’s still here, somehow. I don’t know what I came looking for. Maybe just to hear it one more time. Maybe just to know it’s okay to leave.\nShot Number: 01\nScene:\nWide shot from the end of a dusty gravel road. The man—mid-60s, loose jacket, back to camera—stands framed by distant tree lines and an old, two-story farmhouse. Low golden hour sun. Shot on 35mm, 50mm lens at f/1.8, shallow focus with soft bokeh in the foreground weeds.\nMovement:\nSlow dolly-in, gentle and steady, advancing toward the man as if the land itself remembers him.\nSound Design:\nDry summer wind brushing against tall grass. Distant crow call. The faint crunch of gravel beneath his worn boots.\nShot Number: 02\nScene:\nInterior of the house. A wide shot from a low angle, facing the open front door. Dust floats in diagonal shafts of light. Wooden floorboards cracked and faded. Camera set at 24mm, f/2.2 to exaggerate perspective.\nMovement:\nTilt down from the ceiling fan (barely turning) to reveal the man’s silhouette entering the room.\nSound Design:\nThe slow creak of the front door. The hum of insects through broken screens. A distant memory of laughter—distorted like tape warble—barely audible under the ambient texture.\nNow generate the voiceover and all requested shots in this format—each with Shot Number, detailed Scene, Movement, and Sound Design.\nFORMAT ENFORCEMENT (OVERRIDES ALL PREVIOUS EXAMPLES)\nReturn ONLY valid JSON that matches the provided schema. \n- Do not include code fences, labels, markdown, or any extra text.\n- If a value is unknown, use ''."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        -2624,
+        -864
+      ],
+      "id": "b719407a-fa38-46a8-98e2-c39bfc2c1a64",
+      "name": "Media Agent",
+      "alwaysOutputData": false,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst output = [];\nfor (const item of items) {\n  const shots = item.json.output.fullscript;\n  for (const shot of shots) {\n    output.push({\n      json: {\n        row: [\n          shot.voiceover ?? '',\n          shot.shot_number ?? '',\n          shot.scene ?? '',\n          shot.movement ?? '',\n          shot.sound_design ?? ''\n        ]\n      }\n    });\n  }\n}\nreturn output;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2624,
+        -496
+      ],
+      "id": "28cc56c7-c528-4789-bb0b-bd0001bb7662",
+      "name": "Format for Sheets",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## 06\n**SOUND EFFECTS** ",
+        "height": 624,
+        "width": 3792,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3040,
+        1808
+      ],
+      "id": "449abf88-6f48-4a91-91bc-c32f9bef217c",
+      "name": "Sticky Note12",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build a clean user_message from the \"Premise\" sheet row\n// and return ONLY the fields we want downstream.\nreturn items.map(item => {\n  const j = item.json || {};\n  const duration = j[\"Duration (Seconds)\"] ?? 30;\n  const shots    = Number(j[\"Number of Shots\"] ?? 6) || 6;\n  const premise  = j[\"Premise\"] ?? \"\";\n  const setting = j[\"Setting\"] ?? \"\";\n  const characters = j[\"Characters\"] ?? \"\";\n\n  const user_message =\n`Create a ${duration} second film with ${shots} shots. Premise: ${premise} Setting: ${setting} Characters: ${characters}`;\n\n  // Return a minimal payload (keep row_number if you need to write back later)\n  return { json: { user_message } };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1472,
+        -1376
+      ],
+      "id": "829174b3-ae96-464d-8f49-534e4eb1c318",
+      "name": "Stitch Prompt"
+    },
+    {
+      "parameters": {
+        "content": "## 02\n**SOUNDTRACK** ",
+        "height": 624,
+        "width": 2710,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1968,
+        -912
+      ],
+      "id": "31aa92f8-24e2-4127-9154-eb5faab79453",
+      "name": "Sticky Note16",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2a8f3f3e-4946-48f9-9cd4-97774c93cf17",
+              "name": "Soundtrack",
+              "value": "={{ $json.Soundtrack }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1648,
+        -640
+      ],
+      "id": "55ba939a-58af-41de-b0a2-fe75e34518ef",
+      "name": "Soundtrack Prompt"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/sonauto/v2/text-to-music",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"prompt\": \"{{ $json.Soundtrack }}. Instrumental only. No vocals. No lyrics.\",\n  \"lyrics_prompt\": \"\",\n  \"prompt_strength\": 2,\n  \"balance_strength\": 0.2,\n  \"num_songs\": 1,\n  \"output_format\": \"wav\",\n  \"bpm\": \"auto\"\n}",
+        "options": {}
+      },
+      "id": "c96f5641-3d3e-44b3-8ccc-6333f8117929",
+      "name": "Sonauto V2 Text to Music",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -1472,
+        -640
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "NEUa1Bd2iq3TQkWN",
+          "name": "Header_FAL_Tate"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/sonauto/v2/requests/{{ $json.request_id }}/status",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "b0ed12a9-3953-405c-ba52-5e4edb2b089f",
+      "name": "Check Sonauto Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -1056,
+        -640
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "NEUa1Bd2iq3TQkWN",
+          "name": "Header_FAL_Tate"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "299a7c34-dcff-4991-a73f-5b1a84f188ea",
+              "operator": {
+                "name": "filter.operator.equals",
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "COMPLETED"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "62f6c0d1-0f14-46aa-b8ab-73ad77490bd5",
+      "name": "Completed?5",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        -864,
+        -640
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/sonauto/v2/requests/{{ $json.request_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "71ab5f28-0435-4ac8-8db8-26af1d963d10",
+      "name": "Get Soundtrack Result URL",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -608,
+        -656
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "NEUa1Bd2iq3TQkWN",
+          "name": "Header_FAL_Tate"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $binary.data.fileName }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1Dbuwm-oztjjbN4ynrSUvLkECPqih1dRI",
+          "mode": "list",
+          "cachedResultName": "Soundtrack",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1Dbuwm-oztjjbN4ynrSUvLkECPqih1dRI"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        448,
+        -656
+      ],
+      "id": "da5aae43-dc54-4e33-9ae4-3ed751af897c",
+      "name": "Upload file4",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Ewv49eVtefBoFHBt",
+          "name": "Google Drive account_TATE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * Rename incoming binary to \"music_soundtrack.wav\"\n * If no binary is present, keep the URL and attach a suggestedFileName instead.\n */\n\nconst item = $input.item;\n\n// If no binary present, fall back to URL-only flow\nif (!item.binary || Object.keys(item.binary).length === 0) {\n  const url =\n    item.json?.audio?.url ??\n    item.json?.url ??\n    item.json?.response?.url ??\n    item.json?.output?.url ??\n    item.json?.assets?.[0]?.url ??\n    null;\n\n  if (url) {\n    item.json.url = url;\n  }\n  item.json.suggestedFileName = 'music_soundtrack.wav';\n  item.json._note = 'No binary present; set suggestedFileName for later download.';\n  return item;\n}\n\n// Choose the most likely binary property (audio/data/file), else first one\nconst keys = Object.keys(item.binary);\nconst preferred = ['audio', 'data', 'file', 'binary', 'document'];\nconst binProp = preferred.find(k => keys.includes(k)) || keys[0];\n\n// Rename file + set metadata\nitem.binary[binProp].fileName = 'music_soundtrack.wav';\nitem.binary[binProp].fileExtension = 'wav';\nitem.binary[binProp].mimeType = 'audio/wav';\n\nreturn item;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        -656
+      ],
+      "id": "ddf44a8a-a8d7-475e-9613-c7deda672db8",
+      "name": "Rename"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Requires: $binary.image from the HTTP Request node.\n// Names files like img-shot-05.png using shot_number from the merged JSON.\nreturn items.map((item, idx) => {\n  const j = item.json || {};\n  const bin = item.binary || {};\n  const b = bin.image || bin.data || bin.file;\n\n  if (!b || !b.data) {\n    // If an item somehow has no downloaded file, skip it.\n    return null;\n  }\n\n  // Keep binary under \"image\"\n  bin.image = b;\n\n  // Shot number: support both 'shot_number' and 'Shot Number'\n  const rawShot = j.shot_number ?? j[\"Shot Number\"] ?? (idx + 1);\n  const shotStr = String(rawShot).match(/\\d+/)?.[0]?.padStart(2, \"0\") || String(idx + 1).padStart(2, \"0\");\n\n  // Decide extension from filename, MIME, or URL\n  const fromName = (bin.image.fileName || j.image?.file_name || \"\")\n    .match(/\\.(png|jpe?g|webp|gif|tiff?|bmp|heic|avif)(?=($|\\?|#))/i)?.[0]?.toLowerCase();\n  const mime = j.images?.[0]?.content_type || bin.image.mimeType || \"\";\n  const fromUrl = String(j.images?.[0]?.url || j.image_url || j.url || \"\")\n    .match(/\\.(png|jpe?g|webp|gif|tiff?|bmp|heic|avif)(?=($|\\?|#))/i)?.[0]?.toLowerCase();\n\n  const ext =\n    fromName ||\n    (/png/i.test(mime)  ? \".png\"  :\n     /jpe?g/i.test(mime)? \".jpg\"  :\n     /webp/i.test(mime) ? \".webp\" :\n     /gif/i.test(mime)  ? \".gif\"  :\n     /tiff?/i.test(mime)? \".tif\"  :\n     /bmp/i.test(mime)  ? \".bmp\"  :\n     /heic/i.test(mime) ? \".heic\" :\n     /avif/i.test(mime) ? \".avif\" : null) ||\n    fromUrl || \".png\";\n\n  // Finalize name + mime\n  bin.image.fileName = `img-shot-${shotStr}${ext}`;\n  if (!bin.image.mimeType) {\n    bin.image.mimeType =\n      mime ||\n      (ext === \".png\"  ? \"image/png\"  :\n       ext === \".jpg\"  ? \"image/jpeg\" :\n       ext === \".jpeg\" ? \"image/jpeg\" :\n       ext === \".webp\" ? \"image/webp\" :\n       ext === \".gif\"  ? \"image/gif\"  :\n       ext === \".tif\"  ? \"image/tiff\" :\n       ext === \".tiff\" ? \"image/tiff\" :\n       ext === \".bmp\"  ? \"image/bmp\"  :\n       ext === \".heic\" ? \"image/heic\" :\n       ext === \".avif\" ? \"image/avif\" : \"application/octet-stream\");\n  }\n\n  return { json: j, binary: bin };\n}).filter(Boolean);\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        -80
+      ],
+      "id": "b7f3475f-23ea-4c75-9f2d-fb44b1fb4cbd",
+      "name": "Rename Assets",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"fullscript\": [\n    { \n      \"voiceover\": \"[PARAGRAPH]\"\n    },\n    {\n      \"shot_number\": \"1\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"2\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"3\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"4\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"5\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"6\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"7\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"8\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"9\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"10\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"11\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"12\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"13\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"14\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"15\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"16\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"17\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"18\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"19\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"20\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"21\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"22\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"23\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },  \n    {\n      \"shot_number\": \"24\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"25\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"26\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"27\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"28\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"29\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"30\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    }, \n    {\n      \"shot_number\": \"31\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"32\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"33\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },  \n    {\n      \"shot_number\": \"34\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"35\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"36\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"37\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"38\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"39\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"40\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"41\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"42\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n       {\n      \"shot_number\": \"43\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },  \n    {\n      \"shot_number\": \"44\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"45\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"46\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"47\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"48\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"49\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"50\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\" \n    },\n    {\n      \"shot_number\": \"51\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"52\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n       {\n      \"shot_number\": \"53\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },  \n    {\n      \"shot_number\": \"54\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"55\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"56\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"57\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"58\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"59\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\"\n    },\n    {\n      \"shot_number\": \"60\",\n      \"scene\": \"[SUBJECT & IMAGE PROMPT & CAMERA]\",\n      \"movement\": \"[MOVEMENT]\",\n      \"sound_design\": \"[SOUND_DESIGN]\" \n    }\n  ]\n}\n"
+      },
+      "id": "176cce95-54f3-44e3-9209-2caef1ac49ab",
+      "name": "Structured Output",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "position": [
+        -2480,
+        -704
+      ],
+      "typeVersion": 1.2,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -2624,
+        -704
+      ],
+      "id": "526bc4d5-f036-4220-9fd5-6e1e2bc919da",
+      "name": "OpenAI Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "pT0gmJG01W3XcIML",
+          "name": "OpenAi account_Tate"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "/**\n * Output ONLY a sanitized scene_prompt.\n * - Normalizes Unicode (NFKC)\n * - Straight quotes for “ ” ‘ ’\n * - Replaces em/en dashes, ellipsis\n * - Removes zero-width/BOM and control chars\n * - Escapes forward slashes -> '\\/'\n * Result: { json: { scene_prompt: \"<cleaned>\" } }\n */\n\nfunction sanitize(text) {\n  if (text == null) return '';\n  let s = String(text);\n\n  // Normalize Unicode\n  try { s = s.normalize('NFKC'); } catch (e) {}\n\n  // Replace problematic punctuation\n  const replacements = [\n    [/\\u201C|\\u201D/g, '\"'],   // “ ”\n    [/\\u2018|\\u2019/g, \"'\"],   // ‘ ’\n    [/\\u2014/g, '--'],         // — -> --\n    [/\\u2013/g, '-'],          // – -> -\n    [/\\u2026/g, '...'],        // … -> ...\n    [/\\u00A0/g, ' '],          // NBSP -> space\n    [/\\u200B|\\u200C|\\u200D|\\uFEFF/g, ''], // zero-width & BOM\n    [/[«»]/g, '\"'],\n    [/\\u201A|\\u201B|‚|‛/g, \"'\"],\n    [/\\u02BC|\\u00B4|\\u2032/g, \"'\"], // apostrophe variants\n    [/\\u2033/g, '\"'],          // double prime\n    [/`/g, \"'\"],               // backtick -> apostrophe\n  ];\n  for (const [re, rep] of replacements) s = s.replace(re, rep);\n\n  // Remove control characters except \\t \\n \\r\n  s = s.replace(/[\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F\\u007F]/g, '');\n\n  // Escape forward slashes (helps if body is constructed from strings)\n  s = s.replace(/\\//g, '\\\\/');\n\n  // Trim and collapse excessive spaces\n  s = s.replace(/\\s{2,}/g, ' ').trim();\n\n  return s;\n}\n\n// ---- main ----\nconst original = $json.scene_prompt ?? '';\nconst sanitized = sanitize(original);\n\n// Output ONLY the sanitized field\nreturn {\n  json: {\n    scene_prompt: sanitized\n  }\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1552,
+        -80
+      ],
+      "id": "d5f8e901-80dd-4e2d-9773-4a97f911ceea",
+      "name": "Clean & Sanitize",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "amount": 40
+      },
+      "id": "15cdccb9-7c13-4588-a00c-4e2f89900f09",
+      "name": "Wait 40 Sec",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        -1232,
+        -640
+      ],
+      "webhookId": "61a8626c-e281-4d4b-abb0-b9d87d1b4e7c",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1GYyDJa5xbSK1UPfE_lZv5JUqW9TU41RrZrV8q8oie68",
+          "mode": "list",
+          "cachedResultName": "Media Agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GYyDJa5xbSK1UPfE_lZv5JUqW9TU41RrZrV8q8oie68/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 678854419,
+          "mode": "list",
+          "cachedResultName": "Image Approval",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GYyDJa5xbSK1UPfE_lZv5JUqW9TU41RrZrV8q8oie68/edit#gid=678854419"
+        },
+        "options": {
+          "outputFormatting": {
+            "values": {
+              "general": "FORMULA",
+              "date": "FORMATTED_STRING"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2688,
+        608
+      ],
+      "id": "c32f4370-d535-450e-9c29-cc98f3aa5ab1",
+      "name": "Get Approved Shots",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9OxeqHywsJ4XoYsm",
+          "name": "Google Sheets_Tate"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract URL from '=IMAGE(\"…\",…)' or 'HYPERLINK(\"…\", IMAGE(\"…\"))'\n// and overwrite Image with the raw URL (plus keep image_url).\nreturn items.map(item => {\n  const json = item.json || {};\n  const raw = String(json[\"Image\"] ?? json[\"image\"] ?? \"\").trim();\n\n  let url = \"\";\n\n  // Case 1: HYPERLINK(\"url\", IMAGE(...))\n  let m = raw.match(/HYPERLINK\\(\\s*\"([^\"]+)\"/i);\n  if (m && m[1]) url = m[1];\n\n  // Case 2: IMAGE(\"url\", ...)\n  if (!url) {\n    m = raw.match(/IMAGE\\(\\s*\"([^\"]+)\"/i);\n    if (m && m[1]) url = m[1];\n  }\n\n  // Case 3: already a URL (no formula)\n  if (!url && /^https?:\\/\\//i.test(raw)) url = raw;\n\n  // Write both for convenience\n  json.image_url = url || \"\";\n  json.Image = url || \"\"; // overwrite so downstream nodes can keep using $json.Image\n\n  return item;\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2464,
+        608
+      ],
+      "id": "c24be253-b2f6-4939-9207-521d2b17c956",
+      "name": "Extract Image URL",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\n// Find the image urls and movement prompts\nconst urls = items.filter(item => item.json.image).map(item => item.json.image);\nconst moves = items.filter(item => item.json.movement).map(item => item.json.movement);\n\nconst count = Math.min(urls.length, moves.length);\n\n// Pair them by index\nreturn Array.from({length: count}).map((_, i) => ({\n  json: {\n    url: urls[i],\n    movement: moves[i]\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2016,
+        608
+      ],
+      "id": "529a0caa-7bf8-4488-ab34-e674e0f1019f",
+      "name": "Get Movement Prompts",
+      "alwaysOutputData": true,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Keep/normalize $binary.video, and name file from Shot Number.\nreturn items\n  .map((item, idx) => {\n    const json = item.json || {};\n    const bin = item.binary || {};\n\n    // Accept common binary keys if \"video\" isn't present\n    const b = bin.video || bin.data || bin.file || null;\n    if (!b || !b.data) return null; // drop items without a file\n\n    // Normalize to \"video\"\n    bin.video = b;\n\n    // Pull shot number from either \"Shot Number\" (sheet) or shot_number (json)\n    const rawShot = json[\"Shot Number\"] ?? json.shot_number ?? (idx + 1);\n    const shotStr = String(rawShot).match(/\\d+/)?.[0]?.padStart(2,'0') || String(idx+1).padStart(2,'0');\n\n    // Decide extension from existing name/mime/url\n    const fromName = (bin.video.fileName || json.video?.file_name || '').match(/\\.(mp4|mov|webm|mkv)(?=($|\\?|#))/i)?.[0]?.toLowerCase();\n    const fromMime = json.video?.content_type;\n    const fromUrl  = String(json.video?.url || '').match(/\\.(mp4|mov|webm|mkv)(?=($|\\?|#))/i)?.[0]?.toLowerCase();\n    const ext = fromName\n      || (fromMime === 'video/quicktime' ? '.mov'\n          : fromMime === 'video/webm' ? '.webm'\n          : fromMime === 'video/x-matroska' ? '.mkv'\n          : null)\n      || fromUrl\n      || '.mp4';\n\n    bin.video.fileName = `shot-${shotStr}${ext}`;\n    if (!bin.video.mimeType) bin.video.mimeType = fromMime || 'video/mp4';\n\n    return { json, binary: bin };\n  })\n  .filter(Boolean);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        96,
+        784
+      ],
+      "id": "cdd61bb8-77cf-4265-8b3e-990e3db206ec",
+      "name": "Name File",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "id": "11127221-b316-40d3-a318-4950073e33f4",
+      "name": "Wait 60 Sec",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        -992,
+        -80
+      ],
+      "webhookId": "61a8626c-e281-4d4b-abb0-b9d87d1b4e7c",
+      "typeVersion": 1.1,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f0a033cf-fa2b-4930-93b9-ff9c45fa7c14",
+              "name": "Prompt",
+              "type": "string",
+              "value": "={{ $json.movement }}"
+            },
+            {
+              "id": "2b56185d-5c61-4c17-85f1-53ac4aab2b18",
+              "name": "image_url",
+              "type": "string",
+              "value": "={{ $json.url }}"
+            },
+            {
+              "id": "51eb65c0-ae0a-4ce7-ab00-9d13f05ce1e6",
+              "name": "Duration",
+              "type": "number",
+              "value": 5
+            },
+            {
+              "id": "8e89fca7-d380-4876-b973-69caa0394bc5",
+              "name": "Aspect Ratio",
+              "type": "string",
+              "value": "16:9"
+            },
+            {
+              "id": "875e06b7-352a-4dde-8595-3274e9969c9c",
+              "name": "Guidance",
+              "type": "number",
+              "value": 0.5
+            },
+            {
+              "id": "96f8d427-93ce-456e-8ca6-6abbaf32cc77",
+              "name": "Negative Prompt",
+              "value": "blur, distort, and low quality",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "26a629cb-e071-46b6-8ca6-ca4414ce7871",
+      "name": "Format Prompts Kling v2.5 Turbo Pro",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -1792,
+        608
+      ],
+      "typeVersion": 3.4,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/kling-video/v2.5-turbo/pro/image-to-video",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"prompt\": \"{{ $json.Prompt }}\",\n  \"image_url\": \"{{ $json.image_url }}\",\n  \"duration\": \"{{ $json.Duration }}\",\n  \"aspect_ratio\": \"{{ $json['Aspect Ratio'] }}\",\n  \"negative_prompt\": \"{{ $json['Negative Prompt'] }}\",\n  \"cfg_scale\": {{ $json.Guidance }}\n}",
+        "options": {}
+      },
+      "id": "5bd8aa60-4ade-4648-82f3-77552738feea",
+      "name": "Fal Kling v2.5",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -1568,
+        608
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "NEUa1Bd2iq3TQkWN",
+          "name": "Header_FAL_Tate"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/flux-2-pro",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"prompt\": \"{{$json.prompt}}\",\n  \"image_size\": {\n    \"width\": \"{{$json.width}}\",\n    \"height\": \"{{ $json.height}}\"\n},\n  \"safety_tolerance\": \"{{$json.safety_tolerance}}\",\n  \"enable_safety_checker\": {{$json.enable_safety_checker}},\n  \"output_format\": \"{{$json.output_format}}\"\n}",
+        "options": {}
+      },
+      "id": "4431f937-cfb1-4f8f-9cfb-5e20aaa57ba8",
+      "name": "FLUX 2 Pro",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -1200,
+        -80
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "NEUa1Bd2iq3TQkWN",
+          "name": "Header_FAL_Tate"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "unit": "minutes"
+      },
+      "id": "9ee6522a-816f-4d15-ab0f-4c98cc18f680",
+      "name": "Wait 5 Min",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        -1344,
+        608
+      ],
+      "webhookId": "61a8626c-e281-4d4b-abb0-b9d87d1b4e7c",
+      "typeVersion": 1.1,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.audio[0].url }}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "3b14c535-6df6-431a-9a37-a340eab1babf",
+      "name": "Download Soundtrack",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -224,
+        -656
+      ],
+      "typeVersion": 4.2
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get Image Result URL1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Status1": {
+      "main": [
+        [
+          {
+            "node": "Completed?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Completed?1": {
+      "main": [
+        [
+          {
+            "node": "Get Image Result URL1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 60 Sec",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "FLUX 2 Pro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Continue After Approval1": {
+      "main": [
+        [
+          {
+            "node": "Code6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code6": {
+      "main": [
+        [
+          {
+            "node": "Image Prompts",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Image Prompts": {
+      "main": [
+        [
+          {
+            "node": "Clean & Sanitize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Prompt",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Approved Shots",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Voiceover Prompt",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get SFX Prompts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Image Approval",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Download Image1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Get Prompt Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Prompt Approval": {
+      "main": [
+        [
+          {
+            "node": "Continue After Approval1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Status": {
+      "main": [
+        [
+          {
+            "node": "Completed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Completed?": {
+      "main": [
+        [
+          {
+            "node": "Get Video Result URL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 5 Min",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Video Result URL": {
+      "main": [
+        [
+          {
+            "node": "Download Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Status2": {
+      "main": [
+        [
+          {
+            "node": "Completed?2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Completed?2": {
+      "main": [
+        [
+          {
+            "node": "Get Voiceover Result URL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 1 Sec",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Status3": {
+      "main": [
+        [
+          {
+            "node": "Completed?3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Completed?3": {
+      "main": [
+        [
+          {
+            "node": "Get SFX Result URL2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 5 Sec1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 5 Sec1": {
+      "main": [
+        [
+          {
+            "node": "Check Status3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 1 Sec": {
+      "main": [
+        [
+          {
+            "node": "Check Status2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Voiceover Result URL": {
+      "main": [
+        [
+          {
+            "node": "Download Voiceover",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get SFX Result URL2": {
+      "main": [
+        [
+          {
+            "node": "Download SFX",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fal Eleven Labs SFX": {
+      "main": [
+        [
+          {
+            "node": "Wait 5 Sec1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voiceover Prompt": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Fal ElevenLabs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sound Design Prompt": {
+      "main": [
+        [
+          {
+            "node": "Fal Eleven Labs SFX",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fal ElevenLabs": {
+      "main": [
+        [
+          {
+            "node": "Wait 1 Sec",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Image Approval": {
+      "main": [
+        [
+          {
+            "node": "Get Movement Prompts",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Download Video": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "Name File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Prompt": {
+      "main": [
+        [
+          {
+            "node": "Stitch Prompt",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Soundtrack Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Continue After Approval": {
+      "main": [
+        [
+          {
+            "node": "Code7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Prompt Approval1": {
+      "main": [
+        [
+          {
+            "node": "Continue After Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code7": {
+      "main": [
+        [
+          {
+            "node": "Voiceover Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Voiceover": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Upload file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Voiceover Prompt": {
+      "main": [
+        [
+          {
+            "node": "Get Prompt Approval1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Continue After Approval2": {
+      "main": [
+        [
+          {
+            "node": "Code8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Prompt Approval2": {
+      "main": [
+        [
+          {
+            "node": "Continue After Approval2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Code8": {
+      "main": [
+        [
+          {
+            "node": "Sound Design Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download SFX": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get SFX Prompts": {
+      "main": [
+        [
+          {
+            "node": "Get Prompt Approval2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "Code9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code9": {
+      "main": [
+        [
+          {
+            "node": "Upload file2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Image1": {
+      "main": [
+        [
+          {
+            "node": "Rename Assets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Media Agent": {
+      "main": [
+        [
+          {
+            "node": "Format for Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format for Sheets": {
+      "main": [
+        [
+          {
+            "node": "Prompt Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Stitch Prompt": {
+      "main": [
+        [
+          {
+            "node": "Media Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Soundtrack Prompt": {
+      "main": [
+        [
+          {
+            "node": "Sonauto V2 Text to Music",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sonauto V2 Text to Music": {
+      "main": [
+        [
+          {
+            "node": "Wait 40 Sec",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Sonauto Status": {
+      "main": [
+        [
+          {
+            "node": "Completed?5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Completed?5": {
+      "main": [
+        [
+          {
+            "node": "Get Soundtrack Result URL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 40 Sec",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Soundtrack Result URL": {
+      "main": [
+        [
+          {
+            "node": "Download Soundtrack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rename": {
+      "main": [
+        [
+          {
+            "node": "Upload file4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rename Assets": {
+      "main": [
+        [
+          {
+            "node": "Upload file3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Media Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Media Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean & Sanitize": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 40 Sec": {
+      "main": [
+        [
+          {
+            "node": "Check Sonauto Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Approved Shots": {
+      "main": [
+        [
+          {
+            "node": "Extract Image URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Image URL": {
+      "main": [
+        [
+          {
+            "node": "Get Image Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Movement Prompts": {
+      "main": [
+        [
+          {
+            "node": "Format Prompts Kling v2.5 Turbo Pro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Name File": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 60 Sec": {
+      "main": [
+        [
+          {
+            "node": "Check Status1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Prompts Kling v2.5 Turbo Pro": {
+      "main": [
+        [
+          {
+            "node": "Fal Kling v2.5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fal Kling v2.5": {
+      "main": [
+        [
+          {
+            "node": "Wait 5 Min",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FLUX 2 Pro": {
+      "main": [
+        [
+          {
+            "node": "Wait 60 Sec",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 5 Min": {
+      "main": [
+        [
+          {
+            "node": "Check Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Soundtrack": {
+      "main": [
+        [
+          {
+            "node": "Rename",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1567bc2f-9ee6-48cb-b26f-12841201bb18",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d9ecf96d4849a9f2df9259c4fe9802ccdefd36f7c01bc7c2797024859526a70c"
+  },
+  "id": "n6YCchP7kv7rpEz5",
+  "tags": []
+}

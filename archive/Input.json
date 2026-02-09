@@ -1,0 +1,79 @@
+[
+  {
+    "type": "video",
+    "name": "shot-01.mp4",
+    "shotNumber": 1,
+    "url": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mcy2h-mr0kj-nzhd2-2svbty/source.mp4"
+  },
+  {
+    "type": "video",
+    "name": "shot-02.mp4",
+    "shotNumber": 2,
+    "url": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mcy3v-g17gy-74zfa-hpvnrp/source.mp4"
+  },
+  {
+    "type": "video",
+    "name": "shot-03.mp4",
+    "shotNumber": 3,
+    "url": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mcy6d-3jhre-7sm43-y7jqqz/source.mp4"
+  },
+  {
+    "type": "video",
+    "name": "shot-03.mp4",
+    "shotNumber": 3,
+    "url": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mcyd4-v0mp5-n353x-gwfxvg/source.mp4"
+  },
+  {
+    "type": "video",
+    "name": "shot-04.mp4",
+    "shotNumber": 4,
+    "url": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mcyfp-ag5xy-kr1m9-grhm22/source.mp4"
+  },
+  {
+    "type": "video",
+    "name": "shot-05.mp4",
+    "shotNumber": 5,
+    "url": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mcza6-5pr4k-tbwy9-9qv9sv/source.mp4"
+  },
+  {
+    "type": "video",
+    "name": "shot-06.mp4",
+    "shotNumber": 6,
+    "url": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mcyab-80f05-kg53d-dr45j2/source.mp4"
+  },
+  {
+    "type": "video",
+    "name": "shot-07.mp4",
+    "shotNumber": 7,
+    "url": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mczjj-peg4d-799my-pb2ytz/source.mp4"
+  },
+  {
+    "type": "video",
+    "name": "shot-08.mp4",
+    "shotNumber": 8,
+    "url": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mcy92-5p572-2gkpb-admf6s/source.mp4"
+  },
+  {
+    "type": "video",
+    "name": "shot-11.mp4",
+    "shotNumber": 11,
+    "url": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mcywy-r1j30-s62nz-0r782r/source.mp4"
+  },
+  {
+    "type": "video",
+    "name": "shot-14.mp4",
+    "shotNumber": 14,
+    "url": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mcyw0-6vtcn-t7rmc-dpy00w/source.mp4"
+  },
+  {
+    "type": "audio",
+    "name": "vo-track.mp3",
+    "shotNumber": 3,
+    "url": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mcy7k-87ng4-9ega7-33mppc/source.mp3"
+  },
+  {
+    "type": "audio",
+    "name": "music_soundtrack.wav",
+    "url": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mcyqc-jffr6-2s8c5-6zt4bn/source.wav"
+  }
+]

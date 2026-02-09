@@ -2,6 +2,256 @@
   "name": "CINEMATIC_MEDIA_STORYBOARD",
   "nodes": [
     {
+      "parameters": {},
+      "id": "a2c2a3d1-5f4e-4f2a-9a3f-0f5e5a3e0b70",
+      "name": "Manual Trigger (Assemble)",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -3296,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "list",
+        "filters": {},
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1v0AZE_mQQA-O_HOSut3EUNg_Q87czdOC",
+          "mode": "list",
+          "cachedResultName": "Footage",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1v0AZE_mQQA-O_HOSut3EUNg_Q87czdOC"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -3008,
+        112
+      ],
+      "id": "24f5bbd9-7f7d-4bd3-bb92-0c2f0e2a7d1f",
+      "name": "List Footage",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Ewv49eVtefBoFHBt",
+          "name": "Google Drive account_TATE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "list",
+        "filters": {},
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1DeGVrRtGUIFqOSZq5zfSl7CyL7zJa_et",
+          "mode": "list",
+          "cachedResultName": "Voiceover",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1DeGVrRtGUIFqOSZq5zfSl7CyL7zJa_et"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -3008,
+        272
+      ],
+      "id": "b8fb6a72-4a67-4b18-9b8d-4f7a25d2d6f2",
+      "name": "List Voiceover",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Ewv49eVtefBoFHBt",
+          "name": "Google Drive account_TATE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "list",
+        "filters": {},
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1QOcb0Ti9ADBkqicR3DB9u_2lRkSSaDLM",
+          "mode": "list",
+          "cachedResultName": "Sound Effects",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1QOcb0Ti9ADBkqicR3DB9u_2lRkSSaDLM"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -3008,
+        432
+      ],
+      "id": "a5d4fbb0-7c55-44a3-93b1-658f8a5205a3",
+      "name": "List SFX",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Ewv49eVtefBoFHBt",
+          "name": "Google Drive account_TATE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pack the Google Drive list into one item of type 'footage'\nconst files = $input.all().map(i => i.json).filter(f => f && f.id);\n// Derive shot number from filenames like 'shot-01', 'shot_01', '01', etc.\nconst norm = files.map(f => {\n  const m = (f.name || '').match(/(shot[-_\\s]*)?(\\d{1,3})/i);\n  const shot = m ? parseInt(m[2], 10) : NaN;\n  return {\n    id: f.id,\n    name: f.name,\n    url: `https://drive.google.com/uc?export=download&id=${f.id}` ,\n    shot: Number.isFinite(shot) ? shot : 0\n  };\n}).sort((a,b) => a.shot - b.shot);\nreturn [{ json: { kind: 'footage', files: norm } }];",
+        "runOnceForAllItems": true
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2752,
+        112
+      ],
+      "id": "2b6f18a1-1d2f-4c8f-8a35-6a13b0b9d7f1",
+      "name": "Pack Footage"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Choose voiceover file: prefer the most recent or the first if unknown\nconst items = $input.all().map(i => i.json).filter(f => f && f.id);\n// Simple heuristic: pick the first item\nconst f = items[0] || null;\nconst file = f ? { id: f.id, name: f.name, url: `https://drive.google.com/uc?export=download&id=${f.id}` } : null;\nreturn [{ json: { kind: 'voiceover', file } }];",
+        "runOnceForAllItems": true
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2752,
+        272
+      ],
+      "id": "3f9c28c4-7a8e-4e4c-8f19-2ed2e6fd90a9",
+      "name": "Pack Voiceover"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pack SFX list into array keyed by shot number\nconst files = $input.all().map(i => i.json).filter(f => f && f.id);\nconst norm = files.map(f => {\n  const m = (f.name || '').match(/(sd[-_\\s]*shot[-_\\s]*)?(\\d{1,3})/i) || (f.name || '').match(/(shot[-_\\s]*)?(\\d{1,3})/i);\n  const shot = m ? parseInt(m[2], 10) : NaN;\n  return { id: f.id, name: f.name, url: `https://drive.google.com/uc?export=download&id=${f.id}`, shot: Number.isFinite(shot) ? shot : 0 };\n}).filter(x => x.shot > 0).sort((a,b)=>a.shot-b.shot);\nreturn [{ json: { kind: 'sfx', files: norm } }];",
+        "runOnceForAllItems": true
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2752,
+        432
+      ],
+      "id": "a3a64d46-0aa8-4d6c-9b7a-09fd3f0ebc0b",
+      "name": "Pack SFX"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -2544,
+        240
+      ],
+      "id": "f6b1da7d-0b7f-4a0f-8b6a-9e5d6a7c3e1c",
+      "name": "Merge Assets"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -2432,
+        304
+      ],
+      "id": "0f3a1b22-6d4b-4a7f-9e8c-12ab34cd56ef",
+      "name": "Merge Assets 2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build Shotstack timeline from packed assets\n// Inputs: three items with kind: 'footage', 'voiceover', 'sfx'\nconst items = $input.all().map(i => i.json);\nconst find = k => items.find(x => x.kind === k) || { files: [], file: null };\nconst footage = find('footage').files || [];\nconst sfx = find('sfx').files || [];\nconst voice = find('voiceover').file || null;\n\n// Config\nconst shotLen = Number($json.shot_length_seconds ?? 5) || 5;\nconst resolution = String($json.resolution ?? 'hd'); // 'sd','hd','1080','4k'\n\n// Build video track clips sequentially\nlet time = 0;\nconst videoClips = footage.map((f, idx) => {\n  const start = time;\n  const length = shotLen;\n  time += length;\n  return {\n    asset: { type: 'video', src: f.url },\n    start,\n    length,\n    fit: 'cover',\n    position: 'center'\n  };\n});\n\n// Voiceover track (single full clip if present)\nconst audioClips = [];\nif (voice && voice.url) {\n  audioClips.push({ asset: { type: 'audio', src: voice.url }, start: 0, length: Math.max(time, shotLen) });\n}\n\n// SFX clips aligned per shot number\nsfx.forEach(s => {\n  const start = (Math.max(s.shot - 1, 0)) * shotLen;\n  audioClips.push({ asset: { type: 'audio', src: s.url }, start, length: shotLen });\n});\n\nconst tracks = [];\nif (videoClips.length) tracks.push({ clips: videoClips });\nif (audioClips.length) tracks.push({ clips: audioClips });\n\nconst payload = {\n  timeline: {\n    background: '#000000',\n    tracks\n  },\n  output: { format: 'mp4', resolution }\n};\n\nreturn [{ json: { payload } }];",
+        "runOnceForAllItems": true
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2320,
+        272
+      ],
+      "id": "c9d5e2bb-9a9a-4a45-8a2b-9a7f4a2b6c11",
+      "name": "Build Shotstack Payload"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.shotstack.io/stage/render",
+        "authentication": "none",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.payload }}",
+        "options": {}
+      },
+      "id": "d3b2a5f1-4a3d-4d5a-8a2e-5c6b7d8e9f0a",
+      "name": "Shotstack Render",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -2096,
+        272
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "id": "9a7d0f3b-2c4e-4b8d-a9a1-3f1e2d4c5b6a",
+      "name": "Wait 15 Sec (Render)",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        -1904,
+        272
+      ],
+      "webhookId": "6f7e8d9c-1a2b-3c4d-5e6f-7a8b9c0d1e2f",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "url": "=https://api.shotstack.io/stage/render/{{ $json.id }}",
+        "authentication": "none",
+        "options": {}
+      },
+      "id": "e6c4b1a9-5d8f-4f3a-9c7b-2e5d6f7a8b9c",
+      "name": "Shotstack Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -1712,
+        272
+      ],
+      "typeVersion": 4.2
+    },
+    {
       "parameters": {
         "url": "=https://queue.fal.run/fal-ai/flux-pro/requests/{{ $json.request_id }}",
         "authentication": "genericCredentialType",
@@ -629,7 +879,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const result = [];\n\nfor (const item of items) {\n  const approval = (item.json.Approval || '').toLowerCase().trim();\n  if (approval === 'approved') {\n    result.push({\n      json: {\n        voiceover: item.json['Voiceover'] ?? '',\n        shot_number: item.json['Shot Number'] ?? '',\n        scene: item.json['Scene'] ?? '',\n        movement: item.json['Movement'] ?? '',\n        sound_design: item.json['Sound Design'] ?? ''\n      }\n    });\n  }\n}\n\nreturn result;"
+        "jsCode": "const result = [];\n\nfor (const item of items) {\n  const approval = String(item?.json?.Approval ?? '').toLowerCase().trim();\n  if (approval === 'approved') {\n    result.push({\n      json: {\n        voiceover: item?.json?.['Voiceover'] ?? '',\n        shot_number: item?.json?.['Shot Number'] ?? '',\n        scene: item?.json?.['Scene'] ?? '',\n        movement: item?.json?.['Movement'] ?? '',\n        sound_design: item?.json?.['Sound Design'] ?? ''\n      }\n    });\n  }\n}\n\nreturn result;"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -643,7 +893,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const result = [];\n\nfor (const item of items) {\n  const approval = (item.json.Approval || '').toLowerCase().trim();\n  if (approval === 'approved') {\n    result.push({\n      json: {\n        shot_number: item.json['Shot Number'] ?? '',\n        image: item.json['Image'] ?? '',\n        movement: item.json['Movement'] ?? '',\n        sound_design: item.json['Sound Design'] ?? ''\n      }\n    });\n  }\n}\n\nreturn result;"
+        "jsCode": "const result = [];\n\nfor (const item of items) {\n  const approval = String(item?.json?.Approval ?? '').toLowerCase().trim();\n  if (approval === 'approved') {\n    result.push({\n      json: {\n        shot_number: item?.json?.['Shot Number'] ?? '',\n        image: item?.json?.['Image'] ?? '',\n        movement: item?.json?.['Movement'] ?? '',\n        sound_design: item?.json?.['Sound Design'] ?? ''\n      }\n    });\n  }\n}\n\nreturn result;"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1444,7 +1694,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const result = [];\n\nfor (const item of items) {\n  const approval = (item.json.Approval || '').toLowerCase().trim();\n  if (approval === 'approved') {\n    result.push({\n      json: {\n        voiceover: item.json['Voiceover'] ?? '',\n        shot_number: item.json['Shot Number'] ?? '',\n        scene: item.json['Scene'] ?? '',\n        movement: item.json['Movement'] ?? '',\n        sound_design: item.json['Sound Design'] ?? ''\n      }\n    });\n  }\n}\n\nreturn result;"
+        "jsCode": "const result = [];\n\nfor (const item of items) {\n  const approval = String(item?.json?.Approval ?? '').toLowerCase().trim();\n  if (approval === 'approved') {\n    result.push({\n      json: {\n        voiceover: item?.json?.['Voiceover'] ?? '',\n        shot_number: item?.json?.['Shot Number'] ?? '',\n        scene: item?.json?.['Scene'] ?? '',\n        movement: item?.json?.['Movement'] ?? '',\n        sound_design: item?.json?.['Sound Design'] ?? ''\n      }\n    });\n  }\n}\n\nreturn result;"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1623,7 +1873,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const result = [];\n\nfor (const item of items) {\n  const approval = (item.json.Approval || '').toLowerCase().trim();\n  if (approval === 'approved') {\n    result.push({\n      json: {\n        voiceover: item.json['Voiceover'] ?? '',\n        shot_number: item.json['Shot Number'] ?? '',\n        scene: item.json['Scene'] ?? '',\n        movement: item.json['Movement'] ?? '',\n        sound_design: item.json['Sound Design'] ?? ''\n      }\n    });\n  }\n}\n\nreturn result;"
+        "jsCode": "const result = [];\n\nfor (const item of items) {\n  const approval = String(item?.json?.Approval ?? '').toLowerCase().trim();\n  if (approval === 'approved') {\n    result.push({\n      json: {\n        voiceover: item?.json?.['Voiceover'] ?? '',\n        shot_number: item?.json?.['Shot Number'] ?? '',\n        scene: item?.json?.['Scene'] ?? '',\n        movement: item?.json?.['Movement'] ?? '',\n        sound_design: item?.json?.['Sound Design'] ?? ''\n      }\n    });\n  }\n}\n\nreturn result;"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1883,6 +2133,148 @@
   ],
   "pinData": {},
   "connections": {
+    "Manual Trigger (Assemble)": {
+      "main": [
+        [
+          {
+            "node": "List Footage",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "List Voiceover",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "List SFX",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Footage": {
+      "main": [
+        [
+          {
+            "node": "Pack Footage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Voiceover": {
+      "main": [
+        [
+          {
+            "node": "Pack Voiceover",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List SFX": {
+      "main": [
+        [
+          {
+            "node": "Pack SFX",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pack Footage": {
+      "main": [
+        [
+          {
+            "node": "Merge Assets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pack Voiceover": {
+      "main": [
+        [
+          {
+            "node": "Merge Assets",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Pack SFX": {
+      "main": [
+        [
+          {
+            "node": "Merge Assets 2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Assets": {
+      "main": [
+        [
+          {
+            "node": "Merge Assets 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Assets 2": {
+      "main": [
+        [
+          {
+            "node": "Build Shotstack Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Shotstack Payload": {
+      "main": [
+        [
+          {
+            "node": "Shotstack Render",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Shotstack Render": {
+      "main": [
+        [
+          {
+            "node": "Wait 15 Sec (Render)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 15 Sec (Render)": {
+      "main": [
+        [
+          {
+            "node": "Shotstack Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Get Image Result URL1": {
       "main": [
         [

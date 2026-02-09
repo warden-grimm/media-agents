@@ -1,0 +1,1140 @@
+{
+  "name": "SEQUENCER_TATE",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "// Normalizes Google Drive results into one item per asset with a valid URL.\n// Works with: HTTP Request (files array), HTTP Request (array body), Google Drive Search (split items).\n\nfunction toArrayFromItems(items) {\n  if (!items || !items.length) return [];\n  if (Array.isArray(items[0].json?.files)) return items[0].json.files;     // { files: [...] }\n  if (Array.isArray(items[0].json)) return items[0].json;                  // body is an array\n  return items.map(i => i.json);                                           // already split items\n}\n\nfunction directUrl(id, webContentLink) {\n  // Fall back to a reliable direct-download style URL.\n  return webContentLink || (id ? `https://drive.google.com/uc?id=${id}&export=download` : undefined);\n}\n\nfunction shotNum(name, idx) {\n  // Pull the first number from the filename; fallback to index+1.\n  const m = String(name || '').match(/(\\d{1,4})/);\n  return m ? parseInt(m[1], 10) : (idx + 1);\n}\n\nconst arr = toArrayFromItems(items);\n\n// Sort by name to preserve shot order like 001_, 002_, etc.\narr.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));\n\nreturn arr.map((f, idx) => {\n  const url = directUrl(f.id, f.webContentLink);\n  const mt = f.mimeType || '';\n  const kind = mt.startsWith('video') ? 'video' : (mt.startsWith('audio') ? 'audio' : 'file');\n\n  return {\n    json: {\n      id: f.id,\n      name: f.name,\n      mimeType: mt,\n      url,                               // <= will be present now\n      type: kind,                        // \"video\" or \"audio\"\n      shotNumber: shotNum(f.name, idx)\n    }\n  };\n});\n\n"
+      },
+      "id": "9a857165-e76d-4ac0-95e3-5ac8a1ddfb63",
+      "name": "Normalize Videos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -624,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalizes Google Drive results into one item per asset with a valid URL.\n// Works with: HTTP Request (files array), HTTP Request (array body), Google Drive Search (split items).\n\nfunction toArrayFromItems(items) {\n  if (!items || !items.length) return [];\n  if (Array.isArray(items[0].json?.files)) return items[0].json.files;     // { files: [...] }\n  if (Array.isArray(items[0].json)) return items[0].json;                  // body is an array\n  return items.map(i => i.json);                                           // already split items\n}\n\nfunction directUrl(id, webContentLink) {\n  // Fall back to a reliable direct-download style URL.\n  return webContentLink || (id ? `https://drive.google.com/uc?id=${id}&export=download` : undefined);\n}\n\nfunction shotNum(name, idx) {\n  // Pull the first number from the filename; fallback to index+1.\n  const m = String(name || '').match(/(\\d{1,4})/);\n  return m ? parseInt(m[1], 10) : (idx + 1);\n}\n\nconst arr = toArrayFromItems(items);\n\n// Sort by name to preserve shot order like 001_, 002_, etc.\narr.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));\n\nreturn arr.map((f, idx) => {\n  const url = directUrl(f.id, f.webContentLink);\n  const mt = f.mimeType || '';\n  const kind = mt.startsWith('video') ? 'video' : (mt.startsWith('audio') ? 'audio' : 'file');\n\n  return {\n    json: {\n      id: f.id,\n      name: f.name,\n      mimeType: mt,\n      url,                               // <= will be present now\n      type: kind,                        // \"video\" or \"audio\"\n      shotNumber: shotNum(f.name, idx)\n    }\n  };\n});\n"
+      },
+      "id": "2a747b37-a49a-43ef-b43f-de57b63e2af4",
+      "name": "Normalize VO",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -624,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalizes Google Drive results into one item per asset with a valid URL.\n// Works with: HTTP Request (files array), HTTP Request (array body), Google Drive Search (split items).\n\nfunction toArrayFromItems(items) {\n  if (!items || !items.length) return [];\n  if (Array.isArray(items[0].json?.files)) return items[0].json.files;     // { files: [...] }\n  if (Array.isArray(items[0].json)) return items[0].json;                  // body is an array\n  return items.map(i => i.json);                                           // already split items\n}\n\nfunction directUrl(id, webContentLink) {\n  // Fall back to a reliable direct-download style URL.\n  return webContentLink || (id ? `https://drive.google.com/uc?id=${id}&export=download` : undefined);\n}\n\nfunction shotNum(name, idx) {\n  // Pull the first number from the filename; fallback to index+1.\n  const m = String(name || '').match(/(\\d{1,4})/);\n  return m ? parseInt(m[1], 10) : (idx + 1);\n}\n\nconst arr = toArrayFromItems(items);\n\n// Sort by name to preserve shot order like 001_, 002_, etc.\narr.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));\n\nreturn arr.map((f, idx) => {\n  const url = directUrl(f.id, f.webContentLink);\n  const mt = f.mimeType || '';\n  const kind = mt.startsWith('video') ? 'video' : (mt.startsWith('audio') ? 'audio' : 'file');\n\n  return {\n    json: {\n      id: f.id,\n      name: f.name,\n      mimeType: mt,\n      url,                               // <= will be present now\n      type: kind,                        // \"video\" or \"audio\"\n      shotNumber: shotNum(f.name, idx)\n    }\n  };\n});\n"
+      },
+      "id": "96da731f-0344-470c-b3bb-011d43b4b855",
+      "name": "Normalize SFX",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -624,
+        384
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "a7279e7d-8d01-40d4-933f-f5f78b89fb93",
+      "name": "Merge Video + VO",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [
+        -384,
+        48
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "33a8d640-25b6-4a5d-903a-c95b03964ba6",
+      "name": "Merge All ( + SFX )",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [
+        -208,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "/********************************************\n * Build Shotstack timeline (defensive globals)\n ********************************************/\nconst DEFAULT_LEN = 5;\nconst VO_VOL = 1.0;\nconst MUSIC_VOL = 0.5;\nconst SFX_VOL = 0.3;\n\nconst asNum = v => (typeof v === 'number' && isFinite(v) ? v : undefined);\nconst lower = s => String(s || '').toLowerCase();\nconst extOf = u => {\n  const m = lower(u || '').match(/\\.(mp4|mov|mp3|wav|m4a|ogg|webm|flac|aac)(?=($|[?#]))/);\n  return m ? m[1] : '';\n};\nconst parseShot = (sn) => {\n  if (sn === null || sn === undefined) return null;\n  const n = typeof sn === 'string' ? parseInt(sn.trim(), 10) : Number(sn);\n  return Number.isFinite(n) ? n : null;\n};\n\nfunction norm(it, idx) {\n  const j = it.json || it;\n  const attr = j.data?.attributes || {};\n  const url = j.servedUrl || j.url || attr.source || attr.input;\n  const name = j.name || j.data?.id || `asset_${idx + 1}`;\n  let type = j.type;\n  if (!type) {\n    if (attr.width) type = 'video';\n    else {\n      const e = extOf(url);\n      type = ['mp4', 'mov'].includes(e) ? 'video'\n           : ['mp3','wav','m4a','ogg','flac','aac'].includes(e) ? 'audio'\n           : 'file';\n    }\n  }\n  const shotNumber = parseShot(j.shotNumber ?? j['Shot Number'] ?? j.shot_number ?? null);\n  const duration = asNum(attr.duration) ?? asNum(j.duration);\n  return { id: j.sourceId || j.data?.id || j.id, name, _name: lower(name), url, type, shotNumber, duration, ext: extOf(url) };\n}\n\nconst all = items.map(norm);\nlet videos = all.filter(x => x.type === 'video');\nlet audios = all.filter(x => x.type === 'audio');\n\n// Ensure sequential shot numbers for videos if missing\nlet seq = 1;\nfor (const v of videos) if (v.shotNumber == null) v.shotNumber = seq++;\nvideos.sort((a, b) => (a.shotNumber || 0) - (b.shotNumber || 0));\n\n// Build video timeline & total length\nconst clips = [];\nlet cursor = 0;\nconst shotStart = {};\nconst shotLen = {};\n\nfor (const v of videos) {\n  const len = asNum(v.duration) ?? DEFAULT_LEN;\n  clips.push({ asset: { type: 'video', src: v.url }, start: cursor, length: len });\n  shotStart[v.shotNumber] = cursor;\n  shotLen[v.shotNumber] = len;\n  cursor += len;\n}\nconst totalLen = Math.max(cursor, DEFAULT_LEN);\n\n// --- DEFENSIVE SANITIZE: global audio should never have a shot number ---\nconst nameIsGlobal = (n) => /\\b(vo|voice|narration|music|soundtrack|bgm)\\b/.test(n);\nfor (const a of audios) {\n  if (nameIsGlobal(a._name)) a.shotNumber = null;  // force globals\n}\n\n// If we only have 2 audios total and none clearly marked SFX by name,\n// treat both as globals regardless of any stray shotNumber values.\nconst sfxByName = (a) => /\\b(sfx|fx|effect)\\b/.test(a._name);\nconst numericAudios = audios.filter(a => a.shotNumber !== null);\nif (audios.length === 2 && numericAudios.length <= 1 && !audios.some(sfxByName)) {\n  for (const a of audios) a.shotNumber = null;\n}\n\n// Partition after sanitize\nconst sfx = audios.filter(a => a.shotNumber !== null);\nlet globals = audios.filter(a => a.shotNumber === null);\n\n// Pick VO then Music\nconst byName = (arr, re) => arr.find(a => re.test(a._name));\nlet voiceover =\n  byName(globals, /\\b(vo|voice|narration)\\b/) ||\n  globals.find(a => a.ext === 'mp3') ||\n  globals.slice().sort((a,b)=> (asNum(b.duration)||0)-(asNum(a.duration)||0))[0] || null;\n\nif (voiceover) globals = globals.filter(a => a !== voiceover);\n\nlet music =\n  byName(globals, /\\b(music|soundtrack|bgm)\\b/) ||\n  globals.find(a => a.ext === 'wav') ||\n  globals.slice().sort((a,b)=> (asNum(b.duration)||0)-(asNum(a.duration)||0))[0] || null;\n\n// Force VO & Music full length\nif (voiceover && voiceover.url) {\n  clips.push({ name: 'vo-track', asset: { type: 'audio', src: voiceover.url, volume: VO_VOL }, start: 0, length: totalLen });\n}\nif (music && music.url) {\n  clips.push({ asset: { type: 'audio', src: music.url, volume: MUSIC_VOL }, start: 0, length: totalLen });\n}\n\n// SFX per-shot\nfor (const fx of sfx) {\n  const sn = fx.shotNumber;\n  const start = shotStart[sn];\n  if (start == null) continue;\n  const len = asNum(shotLen[sn]) ?? asNum(fx.duration) ?? DEFAULT_LEN;\n  clips.push({ asset: { type: 'audio', src: fx.url, volume: SFX_VOL }, start, length: len });\n}\n\n// Safety\nfor (const c of clips) if (!(asNum(c.length) > 0)) c.length = DEFAULT_LEN;\n\nreturn [{ json: { timeline: { tracks: [{ clips }] }, output: { format: 'mp4', resolution: 'hd' } } }];"
+      },
+      "id": "fdbd8b05-a214-4429-b795-b859b204cc8c",
+      "name": "Build Shotstack Timeline",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1216,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.shotstack.io/v1/render/{{ $json.response?.id || $json.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"Content-Type\": \"application/json\"\n}",
+        "options": {}
+      },
+      "id": "375f78d6-b271-4139-9f8c-d488a7f99f08",
+      "name": "Check Render Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1888,
+        96
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ZUNUpkqvoCummIyt",
+          "name": "Shotstack API _Tate"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/drive/v3/files",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "sendQuery": true,
+        "specifyQuery": "json",
+        "jsonQuery": "={\n  \"q\": \"'1v0AZE_mQQA-O_HOSut3EUNg_Q87czdOC' in parents and mimeType contains 'video/' and trashed = false\",\n  \"fields\": \"files(id,name,mimeType,webViewLink,webContentLink),nextPageToken\",\n  \"orderBy\": \"name\",\n  \"pageSize\": 1000,\n  \"spaces\": \"drive\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -816,
+        32
+      ],
+      "id": "6335c1f1-76ce-45d0-a690-40a4aebcf6be",
+      "name": "List Footage Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Ewv49eVtefBoFHBt",
+          "name": "Google Drive account_TATE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/drive/v3/files",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "sendQuery": true,
+        "specifyQuery": "json",
+        "jsonQuery": "={\n  \"q\": \"'1DeGVrRtGUIFqOSZq5zfSl7CyL7zJa_et' in parents and (mimeType = 'audio/mpeg' or (mimeType contains 'audio/' and name contains '.mp3')) and trashed = false\",\n  \"fields\": \"files(id,name,mimeType,webViewLink,webContentLink),nextPageToken\",\n  \"orderBy\": \"name\",\n  \"pageSize\": 1000,\n  \"spaces\": \"drive\",\n  \"supportsAllDrives\": true,\n  \"includeItemsFromAllDrives\": true,\n  \"corpora\": \"allDrives\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -816,
+        208
+      ],
+      "id": "206ab408-ed94-4921-a0e5-8650d63872fa",
+      "name": "List Voiceover Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Ewv49eVtefBoFHBt",
+          "name": "Google Drive account_TATE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/drive/v3/files",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "sendQuery": true,
+        "specifyQuery": "json",
+        "jsonQuery": "={\n  \"q\": \"'1QOcb0Ti9ADBkqicR3DB9u_2lRkSSaDLM' in parents and (mimeType = 'audio/mpeg' or (mimeType contains 'audio/' and name contains '.mp3')) and trashed = false\",\n  \"fields\": \"files(id,name,mimeType,webViewLink,webContentLink),nextPageToken\",\n  \"orderBy\": \"name\",\n  \"pageSize\": 1000,\n  \"spaces\": \"drive\",\n  \"supportsAllDrives\": true,\n  \"includeItemsFromAllDrives\": true,\n  \"corpora\": \"allDrives\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -816,
+        384
+      ],
+      "id": "23748cd2-5b90-46cb-8a41-cc746b5ba32a",
+      "name": "List Sound Effects Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Ewv49eVtefBoFHBt",
+          "name": "Google Drive account_TATE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 60,
+        "unit": "seconds"
+      },
+      "id": "9e52e842-1a06-4fef-9b58-9411d1de609b",
+      "name": "Wait 60s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        1664,
+        96
+      ],
+      "webhookId": "263f130d-ee69-41f7-990e-729f6adf9e4d",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "299a7c34-dcff-4991-a73f-5b1a84f188ea",
+              "operator": {
+                "name": "filter.operator.equals",
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{$json.response?.status}}",
+              "rightValue": "done"
+            },
+            {
+              "id": "127d0429-7cc2-48f6-8ef9-7336037dba1b",
+              "leftValue": "={{$json.response?.status}}",
+              "rightValue": "failed",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "a9859bcf-e60a-4419-840c-7b71b98429d8",
+      "name": "Completed?4",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        2112,
+        96
+      ],
+      "typeVersion": 2.2,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{$json.response?.url || $json.url || $json.data?.url || $json.assets?.[0]?.url}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2336,
+        80
+      ],
+      "id": "7753eb50-71ea-49fa-896c-03063c6be3f8",
+      "name": "Edit Fields2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "={{$json.assetUrl}}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2560,
+        80
+      ],
+      "id": "18554848-9bea-44c8-a877-a90fc77a8fc8",
+      "name": "Download the file",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "datadata",
+        "name": "={{$json.fileName || `shotstack_render_${$now}.mp4`}}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1Gyz-X4Li1EbPtaxHS9wWJqFOSW9AVmX2",
+          "mode": "list",
+          "cachedResultName": "Sequence",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1Gyz-X4Li1EbPtaxHS9wWJqFOSW9AVmX2"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2784,
+        80
+      ],
+      "id": "a59de4c5-19e1-4df0-af21-4267ca693483",
+      "name": "Upload Shotstack",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Ewv49eVtefBoFHBt",
+          "name": "Google Drive account_TATE"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/drive/v3/files",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "sendQuery": true,
+        "specifyQuery": "json",
+        "jsonQuery": "={\n  \"q\": \"'1Dbuwm-oztjjbN4ynrSUvLkECPqih1dRI' in parents and trashed = false and (mimeType contains 'audio/' or mimeType = 'audio/wav' or mimeType = 'audio/x-wav' or mimeType = 'audio/wave' or mimeType = 'application/octet-stream' or name contains '.wav' or name contains '.WAV')\",\n  \"fields\": \"files(id,name,mimeType,webViewLink,webContentLink),nextPageToken\",\n  \"orderBy\": \"name\",\n  \"pageSize\": 1000,\n  \"spaces\": \"drive\",\n  \"supportsAllDrives\": true,\n  \"includeItemsFromAllDrives\": true,\n  \"corpora\": \"allDrives\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -816,
+        576
+      ],
+      "id": "59001eb5-5c92-4b39-9b5a-7884bc109695",
+      "name": "List Soundtrack",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Ewv49eVtefBoFHBt",
+          "name": "Google Drive account_TATE"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "8b7f508f-7fec-4a90-b07f-dc637fc77461",
+      "name": "Merge All ( + Music)",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [
+        0,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize Google Drive results into one item per asset with a valid URL.\n// Adapts behavior by content type:\n//   - Footage (videos only): shotNumber parsed from filename digits.\n//   - SFX (multiple audios): shotNumber = sequential index (ignore filename digits).\n//   - Voiceover (single audio): no shotNumber.\n// Works with: HTTP Request (files array), HTTP Request (array body), Google Drive Search (split items).\n\n// -- Optional override: uncomment to force a mode --\n// const FORCE_MODE = 'footage'; // 'sfx' | 'voiceover' | 'footage'\n\nfunction toArrayFromItems(items) {\n  if (!items || !items.length) return [];\n  if (Array.isArray(items[0].json?.files)) return items[0].json.files; // { files: [...] }\n  if (Array.isArray(items[0].json)) return items[0].json;              // body is an array\n  return items.map(i => i.json);                                       // already split items\n}\n\nfunction directUrl(id, webContentLink) {\n  return webContentLink || (id ? `https://drive.google.com/uc?id=${id}&export=download` : undefined);\n}\n\n// Parse first number group anywhere in the name; returns undefined if none\nfunction parseShotFromName(name) {\n  const m = String(name || '').match(/(\\d{1,4})/);\n  return m ? parseInt(m[1], 10) : undefined;\n}\n\nconst raw = toArrayFromItems(items);\n\n// Identify collection type\nconst countVideo = raw.filter(f => String(f.mimeType || '').startsWith('video')).length;\nconst countAudio = raw.filter(f => String(f.mimeType || '').startsWith('audio')).length;\n\nlet mode;\nif (typeof FORCE_MODE !== 'undefined') {\n  mode = FORCE_MODE;\n} else if (countVideo > 0 && countAudio === 0) {\n  mode = 'footage';\n} else if (countAudio > 1 && countVideo === 0) {\n  mode = 'sfx';\n} else if (countAudio === 1 && countVideo === 0) {\n  mode = 'voiceover';\n} else {\n  // Mixed or ambiguous; default to SFX behavior for safety\n  mode = 'sfx';\n}\n\n// Sort inputs for deterministic ordering\nif (mode === 'footage') {\n  // Prefer numeric shot order if present, otherwise fallback to name\n  raw.sort((a, b) => {\n    const an = parseShotFromName(a.name);\n    const bn = parseShotFromName(b.name);\n    if (an != null && bn != null) return an - bn;\n    if (an != null) return -1;\n    if (bn != null) return 1;\n    return String(a.name || '').localeCompare(String(b.name || ''));\n  });\n} else {\n  // For sfx/voiceover just use name sort\n  raw.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));\n}\n\nconst out = raw.map((f, idx) => {\n  const mt = String(f.mimeType || '');\n  const kind = mt.startsWith('video') ? 'video' : (mt.startsWith('audio') ? 'audio' : 'file');\n  const url = directUrl(f.id, f.webContentLink);\n\n  let shotNumber;\n  if (mode === 'footage') {\n    // Parse from filename (e.g., 001, 02, 12)\n    shotNumber = parseShotFromName(f.name);\n    // Fallback to sequential if no digits found\n    if (shotNumber == null) shotNumber = idx + 1;\n  } else if (mode === 'sfx') {\n    // Always sequential, regardless of filename digits\n    shotNumber = idx + 1;\n  } else if (mode === 'voiceover') {\n    // Single long track: no shotNumber\n    shotNumber = undefined;\n  }\n\n  return {\n    json: {\n      id: f.id,\n      name: f.name,\n      mimeType: f.mimeType,\n      url,\n      type: kind,\n      ...(shotNumber != null ? { shotNumber } : {})\n    }\n  };\n});\n\n// If voiceover mode but more than one audio slipped in, keep only the first\nif (mode === 'voiceover' && out.length > 1) {\n  return [out[0]];\n}\n\nreturn out;\n"
+      },
+      "id": "8088e618-502a-4c04-be0e-20eb01a2e9bc",
+      "name": "Normalize Soundtrack",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -624,
+        576
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.shotstack.io/v1/render",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"Content-Type\": \"application/json\"\n}",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "JSON",
+        "body": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1440,
+        96
+      ],
+      "id": "c7d758d7-b324-455b-bdb8-0f91fc08ae76",
+      "name": "HTTP Shotstack",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ZUNUpkqvoCummIyt",
+          "name": "Shotstack API _Tate"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.shotstack.io/ingest/v1/sources",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"Content-Type\": \"application/json\"\n}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"url\": $json.url } }}",
+        "options": {}
+      },
+      "id": "613e991d-099e-4418-9dab-dfcc637859d9",
+      "name": "Ingest: Create Source",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -144,
+        464
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ZUNUpkqvoCummIyt",
+          "name": "Shotstack API _Tate"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "sourceId",
+              "value": "={{$json.data?.id || $json.id || $json.response?.id}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b5bbe644-bb47-4a32-83a9-49948e934e61",
+      "name": "Set Source Id (keep meta)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        256,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://api.shotstack.io/ingest/' + ($json.ingestEnv || 'v1') + '/sources/' + String($json.sourceIdStable || $json.sourceId || $json.data?.id || '').trim() }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "d9f63d01-313b-43bf-9a82-2eba2b35756b",
+      "name": "Ingest: Get Source",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        448,
+        464
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ZUNUpkqvoCummIyt",
+          "name": "Shotstack API _Tate"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "3375438d-0cf5-4625-a13c-e62c0b4d50ee",
+              "leftValue": "=={{ ($json.status || $json.data?.attributes?.status || '').toString().trim().toLowerCase() }}",
+              "rightValue": "ready",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "241ab829-59e4-4d72-8421-012b321261b6",
+      "name": "IF: Ready?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 7,
+        "unit": "seconds"
+      },
+      "id": "97c4fa98-3c2a-4d93-bc4e-3b3a963ea65e",
+      "name": "Wait 7s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        1584,
+        480
+      ],
+      "webhookId": "a79c76cf-efcd-4105-9f79-aec6c4357413"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "servedUrl",
+              "value": "={{$json.data?.attributes?.source || $json.response?.url || $json.url}}"
+            },
+            {
+              "name": "ingestStatus",
+              "value": "={{$json.data?.attributes?.status || $json.response?.status || $json.status}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "29618626-39df-4794-b4a8-149cf973d786",
+      "name": "Set Served URL",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        192,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      },
+      "id": "9ae29628-5c5b-4700-96ea-9d2d8034a729",
+      "name": "Merge (meta + served)",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [
+        800,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "type",
+              "value": "={{$json.type}}"
+            },
+            {
+              "name": "name",
+              "value": "={{$json.name}}"
+            },
+            {
+              "name": "shotNumber",
+              "value": "={{$json.shotNumber}}"
+            },
+            {
+              "name": "url",
+              "value": "={{$json.servedUrl || $json.url}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c428e2b0-01e5-4841-9ba2-fa04059b67cf",
+      "name": "Use Served URL",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        992,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "81e1495d-0eac-4c4c-9b7a-4d0273832c4a",
+              "leftValue": "={{$json.hasErrors}}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        848,
+        464
+      ],
+      "id": "d0e5a499-c845-47ea-9ec8-447e93d8914a",
+      "name": "Was API Error"
+    },
+    {
+      "parameters": {
+        "errorMessage": "An error has occurred in the Shotstack Ingest"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1584,
+        336
+      ],
+      "id": "fce749e4-f7a4-4fbe-b034-a57908c242a5",
+      "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize the GET response into flags, without dropping any fields/binaries.\nreturn items.map((it) => {\n  const j = it.json || {};\n\n  // Common status fields across n8n/axios/body variants\n  const statusFromBody   = j?.data?.attributes?.status ?? j?.response?.status ?? j?.status ?? '';\n  const servedFromBody   = j?.data?.attributes?.source ?? j?.response?.url ?? j?.url ?? '';\n\n  // HTTP code surfaces in various places depending on n8n version/options\n  const httpCode =\n    (typeof j.statusCode === 'number' ? j.statusCode : undefined) ??\n    (typeof j.status === 'number'     ? j.status     : undefined) ??\n    (typeof j.response?.status === 'number' ? j.response.status : undefined);\n\n  // Axios-style transport error (no JSON \"errors\" array)\n  const isAxiosErr = j?.name === 'AxiosError' || String(j?.code || '').startsWith('ERR_');\n\n  // API-style error array (Shotstack)\n  const apiErrors  = Array.isArray(j?.errors) ? j.errors : [];\n  const apiErr0    = apiErrors[0] || {};\n\n  // Unified flags\n  const hasHttpErr = Number.isFinite(httpCode) && httpCode >= 400;\n  const hasErrors  = (apiErrors.length > 0) || isAxiosErr || hasHttpErr;\n\n  j.status        = String(statusFromBody || '').trim();\n  j.servedUrl     = String(servedFromBody || '').trim();\n  j.httpCode      = httpCode ?? null;\n  j.isAxiosError  = !!isAxiosErr;\n  j.hasErrors     = !!hasErrors;\n  j.errorStatus   = apiErr0.status || j.code || (httpCode != null ? String(httpCode) : '');\n  j.errorTitle    = apiErr0.title  || j.name || '';\n  j.errorDetail   = apiErr0.detail || j.message || '';\n\n  return { json: j, binary: it.binary };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        464
+      ],
+      "id": "20894ee7-30c5-42eb-aa34-f46571822943",
+      "name": "Normalize Ingest"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -816,
+        -224
+      ],
+      "id": "2d452900-b854-4277-8896-e89561e5b3b6",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "abf87f84-fed6-46fd-9bb7-e2b5a660f234",
+              "leftValue": "={{ ($json.status || '').toString().trim().toLowerCase() }}",
+              "rightValue": "queued",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "e4d4d99a-83b9-40ee-a176-903fde2c21f4",
+              "leftValue": "={{ ($json.status || '').toString().trim().toLowerCase() }}",
+              "rightValue": "importing",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1360,
+        496
+      ],
+      "id": "3e10cee5-a03f-4b1c-a075-77629577a65c",
+      "name": "In Progress?"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Clear shotNumber for VO/Music so they are NEVER treated as SFX\nconst isGlobalAudio = (n) => /\\b(vo|voice|narration|music|soundtrack|bgm)\\b/i.test(String(n||''));\n\nreturn items.map(it => {\n  const j = it.json || {};\n  if (j.type === 'audio' && isGlobalAudio(j.name)) {\n    j.shotNumber = null;        // <— critical\n  }\n  return { json: j, binary: it.binary };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        384,
+        80
+      ],
+      "id": "92a57a25-44e5-4474-85f5-51479e04733e",
+      "name": "Upstream fix"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Keep ONLY the fields needed for the next GET call.\n// Also bump the retry counter here.\nreturn items.map((it) => {\n  const j = it.json || {};\n\n  // Resolve a stable source id from any upstream shape, trim whitespace\n  const sourceIdStable = String(\n    j.sourceIdStable ?? j.sourceId ?? j.data?.id ?? ''\n  ).trim();\n\n  // Pin environment (defaults to 'v1' unless you carry 'stage')\n  const ingestEnv = (j.ingestEnv || 'v1').toString();\n\n  // Bump tries (cap optional)\n  const tries = (Number.isFinite(j._tries) ? j._tries : 0) + 1;\n\n  // Return ONLY the whitelisted fields\n  return {\n    json: {\n      sourceIdStable,\n      ingestEnv,\n      _tries: tries\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1776,
+        480
+      ],
+      "id": "42dace47-f8ff-4a1e-8e5b-4694a8189e9a",
+      "name": "Prepare GET Input"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Normalize Videos": {
+      "main": [
+        [
+          {
+            "node": "Merge Video + VO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize VO": {
+      "main": [
+        [
+          {
+            "node": "Merge Video + VO",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Normalize SFX": {
+      "main": [
+        [
+          {
+            "node": "Merge All ( + SFX )",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Video + VO": {
+      "main": [
+        [
+          {
+            "node": "Merge All ( + SFX )",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge All ( + SFX )": {
+      "main": [
+        [
+          {
+            "node": "Merge All ( + Music)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Shotstack Timeline": {
+      "main": [
+        [
+          {
+            "node": "HTTP Shotstack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Render Status": {
+      "main": [
+        [
+          {
+            "node": "Completed?4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Footage Drive": {
+      "main": [
+        [
+          {
+            "node": "Normalize Videos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Voiceover Drive": {
+      "main": [
+        [
+          {
+            "node": "Normalize VO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Sound Effects Drive": {
+      "main": [
+        [
+          {
+            "node": "Normalize SFX",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 60s": {
+      "main": [
+        [
+          {
+            "node": "Check Render Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Completed?4": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 60s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Download the file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download the file": {
+      "main": [
+        [
+          {
+            "node": "Upload Shotstack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Soundtrack": {
+      "main": [
+        [
+          {
+            "node": "Normalize Soundtrack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge All ( + Music)": {
+      "main": [
+        [
+          {
+            "node": "Ingest: Create Source",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Upstream fix",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Soundtrack": {
+      "main": [
+        [
+          {
+            "node": "Merge All ( + Music)",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "HTTP Shotstack": {
+      "main": [
+        [
+          {
+            "node": "Wait 60s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ingest: Create Source": {
+      "main": [
+        [
+          {
+            "node": "Set Source Id (keep meta)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Source Id (keep meta)": {
+      "main": [
+        [
+          {
+            "node": "Ingest: Get Source",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ingest: Get Source": {
+      "main": [
+        [
+          {
+            "node": "Normalize Ingest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: Ready?": {
+      "main": [
+        [
+          {
+            "node": "Set Served URL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "In Progress?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 7s": {
+      "main": [
+        [
+          {
+            "node": "Prepare GET Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Served URL": {
+      "main": [
+        [
+          {
+            "node": "Merge (meta + served)",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge (meta + served)": {
+      "main": [
+        [
+          {
+            "node": "Use Served URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Use Served URL": {
+      "main": [
+        [
+          {
+            "node": "Build Shotstack Timeline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Was API Error": {
+      "main": [
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IF: Ready?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Ingest": {
+      "main": [
+        [
+          {
+            "node": "Was API Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "List Footage Drive",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "List Voiceover Drive",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "List Sound Effects Drive",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "List Soundtrack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "In Progress?": {
+      "main": [
+        [
+          {
+            "node": "Wait 7s",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upstream fix": {
+      "main": [
+        [
+          {
+            "node": "Merge (meta + served)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare GET Input": {
+      "main": [
+        [
+          {
+            "node": "Ingest: Get Source",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "423f6659-b486-420f-a79a-7a5568e943d6",
+  "meta": {
+    "instanceId": "d9ecf96d4849a9f2df9259c4fe9802ccdefd36f7c01bc7c2797024859526a70c"
+  },
+  "id": "70K5cqhPgxUuRVbf",
+  "tags": []
+}

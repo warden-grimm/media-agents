@@ -1,0 +1,233 @@
+{
+  "name": "Shotstack Ingest (fragment)",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.shotstack.io/ingest/v1/sources",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "headerParametersJson": "{\n  \"Content-Type\": \"application/json\",\n  \"x-api-key\": \"YOUR_PROD_API_KEY\"\n}",
+        "jsonParameters": true,
+        "options": {},
+        "bodyParametersJson": "{\n  \"url\": \"{{$json.url}}\"\n}"
+      },
+      "id": "IngestCreate",
+      "name": "Ingest: Create Source",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [300, 300]
+    },
+    {
+      "parameters": {
+        "keepOnlySet": false,
+        "values": [
+          {
+            "name": "sourceId",
+            "value": "={{$json.id || $json.response?.id || $json.data?.id}}"
+          }
+        ]
+      },
+      "id": "KeepMeta",
+      "name": "Set Source Id (keep meta)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [540, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.shotstack.io/ingest/v1/sources/{{ $json.sourceId }}",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "headerParametersJson": "{\n  \"x-api-key\": \"YOUR_PROD_API_KEY\",\n  \"Accept\": \"application/json\"\n}"
+      },
+      "id": "IngestGet",
+      "name": "Ingest: Get Source",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [780, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [],
+          "string": [
+            {
+              "value1": "={{$json.data?.attributes?.status || $json.response?.status || $json.status}}",
+              "operation": "equal",
+              "value2": "ready"
+            }
+          ],
+          "number": []
+        }
+      },
+      "id": "IfReady",
+      "name": "IF: Ready?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1020, 300]
+    },
+    {
+      "parameters": {
+        "unit": "seconds",
+        "value": 7
+      },
+      "id": "Wait",
+      "name": "Wait 7s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [1020, 470]
+    },
+    {
+      "parameters": {
+        "keepOnlySet": false,
+        "values": [
+          {
+            "name": "servedUrl",
+            "value": "={{$json.data?.attributes?.source || $json.response?.url || $json.url}}"
+          },
+          {
+            "name": "ingestStatus",
+            "value": "={{$json.data?.attributes?.status || $json.response?.status || $json.status}}"
+          }
+        ]
+      },
+      "id": "SetServed",
+      "name": "Set Served URL",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [1240, 230]
+    },
+    {
+      "parameters": {
+        "mode": "mergeByIndex"
+      },
+      "id": "MergeMeta",
+      "name": "Merge (meta + served)",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [1470, 230]
+    },
+    {
+      "parameters": {
+        "keepOnlySet": false,
+        "values": [
+          {
+            "name": "url",
+            "value": "={{$json.servedUrl || $json.url}}"
+          }
+        ]
+      },
+      "id": "UseServed",
+      "name": "Use Served URL",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [1700, 230]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.data?.attributes?.status || $json.response?.status || $json.status}}",
+              "operation": "equal",
+              "value2": "failed"
+            }
+          ]
+        }
+      },
+      "id": "IfFailed",
+      "name": "IF: Failed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1240, 370]
+    }
+  ],
+  "connections": {
+    "Ingest: Create Source": {
+      "main": [
+        [
+          {
+            "node": "Set Source Id (keep meta)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Source Id (keep meta)": {
+      "main": [
+        [
+          {
+            "node": "Ingest: Get Source",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ingest: Get Source": {
+      "main": [
+        [
+          {
+            "node": "IF: Ready?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: Ready?": {
+      "main": [
+        [
+          {
+            "node": "Set Served URL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 7s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 7s": {
+      "main": [
+        [
+          {
+            "node": "Ingest: Get Source",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Served URL": {
+      "main": [
+        [
+          {
+            "node": "Merge (meta + served)",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Set Source Id (keep meta)|1": {
+      "main": [
+        [
+          {
+            "node": "Merge (meta + served)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

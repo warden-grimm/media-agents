@@ -1,0 +1,123 @@
+[
+  {
+    "timeline": {
+      "tracks": [
+        {
+          "clips": [
+            {
+              "asset": {
+                "type": "video",
+                "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mcy2h-mr0kj-nzhd2-2svbty/source.mp4"
+              },
+              "start": 0,
+              "length": 5
+            },
+            {
+              "asset": {
+                "type": "video",
+                "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mcy3v-g17gy-74zfa-hpvnrp/source.mp4"
+              },
+              "start": 5,
+              "length": 5
+            },
+            {
+              "asset": {
+                "type": "video",
+                "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mcy6d-3jhre-7sm43-y7jqqz/source.mp4"
+              },
+              "start": 10,
+              "length": 5
+            },
+            {
+              "asset": {
+                "type": "video",
+                "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mcyd4-v0mp5-n353x-gwfxvg/source.mp4"
+              },
+              "start": 15,
+              "length": 5
+            },
+            {
+              "asset": {
+                "type": "video",
+                "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mcyfp-ag5xy-kr1m9-grhm22/source.mp4"
+              },
+              "start": 20,
+              "length": 5
+            },
+            {
+              "asset": {
+                "type": "video",
+                "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mcza6-5pr4k-tbwy9-9qv9sv/source.mp4"
+              },
+              "start": 25,
+              "length": 5
+            },
+            {
+              "asset": {
+                "type": "video",
+                "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mcyab-80f05-kg53d-dr45j2/source.mp4"
+              },
+              "start": 30,
+              "length": 5
+            },
+            {
+              "asset": {
+                "type": "video",
+                "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mczjj-peg4d-799my-pb2ytz/source.mp4"
+              },
+              "start": 35,
+              "length": 5
+            },
+            {
+              "asset": {
+                "type": "video",
+                "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mcy92-5p572-2gkpb-admf6s/source.mp4"
+              },
+              "start": 40,
+              "length": 5
+            },
+            {
+              "asset": {
+                "type": "video",
+                "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mcywy-r1j30-s62nz-0r782r/source.mp4"
+              },
+              "start": 45,
+              "length": 5
+            },
+            {
+              "asset": {
+                "type": "video",
+                "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mcyw0-6vtcn-t7rmc-dpy00w/source.mp4"
+              },
+              "start": 50,
+              "length": 5
+            },
+            {
+              "name": "vo-track",
+              "asset": {
+                "type": "audio",
+                "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mcyqc-jffr6-2s8c5-6zt4bn/source.wav",
+                "volume": 1
+              },
+              "start": 0,
+              "length": 55
+            },
+            {
+              "asset": {
+                "type": "audio",
+                "src": "https://shotstack-ingest-api-v1-sources.s3.ap-southeast-2.amazonaws.com/d9hf0k663y/zzz01k4q-mcy7k-87ng4-9ega7-33mppc/source.mp3",
+                "volume": 0.3
+              },
+              "start": 15,
+              "length": 5
+            }
+          ]
+        }
+      ]
+    },
+    "output": {
+      "format": "mp4",
+      "resolution": "hd"
+    }
+  }
+]

@@ -1,0 +1,301 @@
+{
+  "name": "GDrive to Shotstack: Assemble by Shot Number",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger-1",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            { "name": "SHOTSTACK_API_KEY", "value": "YOUR_SHOTSTACK_API_KEY" },
+            { "name": "SHOTSTACK_BASE_URL", "value": "https://api.shotstack.io/stage" },
+            { "name": "VIDEOS_FOLDER_ID", "value": "YOUR_VIDEOS_FOLDER_ID" },
+            { "name": "VO_FOLDER_ID", "value": "YOUR_VO_FOLDER_ID" },
+            { "name": "SFX_FOLDER_ID", "value": "YOUR_SFX_FOLDER_ID" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set-config-1",
+      "name": "Set Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [430, 300]
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "list",
+        "returnAll": true,
+        "filters": {
+          "q": "'{{$node[\"Set Config\"].json[\"VIDEOS_FOLDER_ID\"]}}' in parents and mimeType contains 'video/' and trashed = false"
+        }
+      },
+      "id": "gdrive-list-videos-1",
+      "name": "List Videos",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [680, 140],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "list",
+        "returnAll": true,
+        "filters": {
+          "q": "'{{$node[\"Set Config\"].json[\"VO_FOLDER_ID\"]}}' in parents and (name contains '.mp3' or name contains '.wav' or name contains '.m4a') and trashed = false"
+        }
+      },
+      "id": "gdrive-list-vo-1",
+      "name": "List VO",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [680, 300],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "list",
+        "returnAll": true,
+        "filters": {
+          "q": "'{{$node[\"Set Config\"].json[\"SFX_FOLDER_ID\"]}}' in parents and (name contains '.mp3' or name contains '.wav' or name contains '.m4a') and trashed = false"
+        }
+      },
+      "id": "gdrive-list-sfx-1",
+      "name": "List SFX",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [680, 460],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "",
+          "name": "Google Drive OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "JavaScript",
+        "jsCode": "// Normalize video files: extract shot number, keep fileId and public link\nreturn items.map(item => {\n  const f = item.json;\n  const name = f.name || '';\n  let shot = null;\n  const m = name.match(/(?:^|\\D)(?:(?:shot|sc|s|sh)[_-]?)?(\\d{1,4})/i);\n  if (m) shot = parseInt(m[1], 10);\n  const id = f.id;\n  const url = 'https://drive.google.com/uc?export=download&id=' + id;\n  return { json: { shot, video: { fileId: id, name, src: url } } };\n});"
+      },
+      "id": "fn-normalize-videos-1",
+      "name": "Normalize Videos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [910, 140]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "JavaScript",
+        "jsCode": "// Normalize VO audio files: extract shot number\nreturn items.map(item => {\n  const f = item.json;\n  const name = f.name || '';\n  let shot = null;\n  const m = name.match(/(?:^|\\D)(?:(?:shot|sc|s|sh)[_-]?)?(\\d{1,4})/i);\n  if (m) shot = parseInt(m[1], 10);\n  const id = f.id;\n  const url = 'https://drive.google.com/uc?export=download&id=' + id;\n  return { json: { shot, vo: { fileId: id, name, src: url } } };\n});"
+      },
+      "id": "fn-normalize-vo-1",
+      "name": "Normalize VO",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [910, 300]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "JavaScript",
+        "jsCode": "// Normalize SFX audio files: extract shot number\nreturn items.map(item => {\n  const f = item.json;\n  const name = f.name || '';\n  let shot = null;\n  const m = name.match(/(?:^|\\D)(?:(?:shot|sc|s|sh)[_-]?)?(\\d{1,4})/i);\n  if (m) shot = parseInt(m[1], 10);\n  const id = f.id;\n  const url = 'https://drive.google.com/uc?export=download&id=' + id;\n  return { json: { shot, sfx: { fileId: id, name, src: url } } };\n});"
+      },
+      "id": "fn-normalize-sfx-1",
+      "name": "Normalize SFX",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [910, 460]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "url": "={{'https://www.googleapis.com/drive/v3/files/' + $json.video.fileId + '?fields=videoMediaMetadata'}}",
+        "options": {}
+      },
+      "id": "http-gdrive-video-meta-1",
+      "name": "Get Video Metadata",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1140, 140],
+      "credentials": {
+        "oAuth2Api": {
+          "id": "",
+          "name": "Google OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "mergeBy": "index"
+      },
+      "id": "merge-video-and-meta-1",
+      "name": "Merge Video+Meta",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [1350, 140]
+    },
+    {
+      "parameters": {
+        "mode": "mergeByKey",
+        "propertyName1": "shot",
+        "propertyName2": "shot"
+      },
+      "id": "merge-video-vo-1",
+      "name": "Merge Video + VO",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [1560, 220]
+    },
+    {
+      "parameters": {
+        "mode": "mergeByKey",
+        "propertyName1": "shot",
+        "propertyName2": "shot"
+      },
+      "id": "merge-all-1",
+      "name": "Merge All ( + SFX )",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [1770, 300]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "JavaScript",
+        "jsCode": "// Build a Shotstack timeline using durations from Drive metadata.\n// Assumes each shot has one video, optional vo and sfx.\nconst itemsIn = items\n  .map(i => i.json)\n  .filter(j => j && j.shot != null && j.video && j.videoMediaMetadata);\n\n// Sort by shot number ascending\nitemsIn.sort((a, b) => a.shot - b.shot);\n\nlet t = 0; // seconds\nconst videoClips = [];\nconst voClips = [];\nconst sfxClips = [];\n\nfor (const j of itemsIn) {\n  const durMs = Number((j.videoMediaMetadata && j.videoMediaMetadata.durationMillis) || 0);\n  const length = Math.max(0.01, durMs / 1000);\n\n  videoClips.push({\n    asset: { type: 'video', src: j.video.src },\n    start: t,\n    length,\n    fit: 'contain'\n  });\n\n  if (j.vo && j.vo.src) {\n    voClips.push({\n      asset: { type: 'audio', src: j.vo.src, volume: 1 },\n      start: t,\n      length\n    });\n  }\n  if (j.sfx && j.sfx.src) {\n    sfxClips.push({\n      asset: { type: 'audio', src: j.sfx.src, volume: 1 },\n      start: t,\n      length\n    });\n  }\n  t += length;\n}\n\nconst tracks = [ { clips: videoClips } ];\nif (voClips.length) tracks.push({ clips: voClips });\nif (sfxClips.length) tracks.push({ clips: sfxClips });\n\nconst shotstackPayload = {\n  timeline: {\n    background: '#000000',\n    tracks\n  },\n  output: { format: 'mp4', resolution: 'hd' }\n};\n\nreturn [{ json: { shotstackPayload } }];"
+      },
+      "id": "fn-build-shotstack-1",
+      "name": "Build Shotstack Timeline",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1980, 300]
+    },
+    {
+      "parameters": {
+        "requestMethod": "POST",
+        "url": "={{$node[\"Set Config\"].json[\"SHOTSTACK_BASE_URL\"] + '/render'}}",
+        "jsonParameters": true,
+        "options": {},
+        "headerParametersJson": "={{JSON.stringify({ 'x-api-key': $node['Set Config'].json['SHOTSTACK_API_KEY'] })}}",
+        "queryParametersJson": "=",
+        "bodyParametersJson": "={{JSON.stringify($json.shotstackPayload)}}"
+      },
+      "id": "http-shotstack-render-1",
+      "name": "Shotstack Render",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [2200, 300]
+    },
+    {
+      "parameters": {
+        "amount": 15,
+        "unit": "seconds"
+      },
+      "id": "wait-1",
+      "name": "Wait 15s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [2400, 300]
+    },
+    {
+      "parameters": {
+        "requestMethod": "GET",
+        "url": "={{$node[\"Set Config\"].json[\"SHOTSTACK_BASE_URL\"] + '/render/' + $json.response.id}}",
+        "jsonParameters": true,
+        "options": {},
+        "headerParametersJson": "={{JSON.stringify({ 'x-api-key': $node['Set Config'].json['SHOTSTACK_API_KEY'] })}}"
+      },
+      "id": "http-shotstack-status-1",
+      "name": "Check Render Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [2600, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            { "value1": "={{$json.response.status}}", "operation": "equal", "value2": "done" }
+          ]
+        }
+      },
+      "id": "if-done-1",
+      "name": "Status == done?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2800, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            { "name": "renderId", "value": "={{$json.response.id}}" },
+            { "name": "status", "value": "={{$json.response.status}}" },
+            { "name": "url", "value": "={{$json.response.url}}" }
+          ]
+        },
+        "options": { "keepOnlySet": true }
+      },
+      "id": "set-output-1",
+      "name": "Set Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [3010, 240]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": { "main": [ [ { "node": "Set Config", "type": "main", "index": 0 } ] ] },
+    "Set Config": { "main": [ [
+      { "node": "List Videos", "type": "main", "index": 0 },
+      { "node": "List VO", "type": "main", "index": 0 },
+      { "node": "List SFX", "type": "main", "index": 0 }
+    ] ] },
+    "List Videos": { "main": [ [ { "node": "Normalize Videos", "type": "main", "index": 0 } ] ] },
+    "Normalize Videos": { "main": [ [
+      { "node": "Get Video Metadata", "type": "main", "index": 0 },
+      { "node": "Merge Video+Meta", "type": "main", "index": 0 }
+    ] ] },
+    "Get Video Metadata": { "main": [ [ { "node": "Merge Video+Meta", "type": "main", "index": 1 } ] ] },
+    "Merge Video+Meta": { "main": [ [ { "node": "Merge Video + VO", "type": "main", "index": 1 } ] ] },
+    "List VO": { "main": [ [ { "node": "Normalize VO", "type": "main", "index": 0 } ] ] },
+    "Normalize VO": { "main": [ [ { "node": "Merge Video + VO", "type": "main", "index": 0 } ] ] },
+    "Merge Video + VO": { "main": [ [ { "node": "Merge All ( + SFX )", "type": "main", "index": 0 } ] ] },
+    "List SFX": { "main": [ [ { "node": "Normalize SFX", "type": "main", "index": 0 } ] ] },
+    "Normalize SFX": { "main": [ [ { "node": "Merge All ( + SFX )", "type": "main", "index": 1 } ] ] },
+    "Merge All ( + SFX )": { "main": [ [ { "node": "Build Shotstack Timeline", "type": "main", "index": 0 } ] ] },
+    "Build Shotstack Timeline": { "main": [ [ { "node": "Shotstack Render", "type": "main", "index": 0 } ] ] },
+    "Shotstack Render": { "main": [ [ { "node": "Wait 15s", "type": "main", "index": 0 } ] ] },
+    "Wait 15s": { "main": [ [ { "node": "Check Render Status", "type": "main", "index": 0 } ] ] },
+    "Check Render Status": { "main": [ [ { "node": "Status == done?", "type": "main", "index": 0 } ] ] },
+    "Status == done?": { "main": [
+      [ { "node": "Set Output", "type": "main", "index": 0 } ],
+      [ { "node": "Wait 15s", "type": "main", "index": 0 } ]
+    ] }
+  },
+  "active": false,
+  "settings": {},
+  "version": 2
+}
